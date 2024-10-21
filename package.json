@@ -1,14 +1,19 @@
 {
-  "name": "eatthepie",
+  "name": "eatthepie-cli",
   "version": "1.0.0",
-  "description": "Interactive CLI for EatThePie - The World Lottery on Ethereum",
-  "main": "index.js",
-  "bin": {
-    "eatthepie": "./index.js"
-  },
+  "description": "CLI for interacting with the EatThePie Ethereum lottery",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "start": "node start.js"
+    "start": "node src/index.js"
   },
+  "keywords": [
+    "ethereum",
+    "lottery",
+    "cli"
+  ],
+  "author": "wd021",
+  "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
     "figlet": "^1.5.2",
