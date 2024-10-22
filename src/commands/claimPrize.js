@@ -26,11 +26,11 @@ async function claimPrizeHandler() {
     console.log(chalk.green("\nPrize claimed successfully!"));
     console.log(chalk.cyan("Transaction Hash:"), txHash);
   } catch (error) {
-    if (error.message?.includes("Game draw not completed yet")) {
+    if (error.message.includes("Game draw not completed yet")) {
       console.log(chalk.yellow("\nGame draw not completed yet."));
-    } else if (error.message?.includes("Prize already claimed")) {
+    } else if (error.message.includes("Prize already claimed")) {
       console.log(chalk.yellow("\nPrize already claimed for this game."));
-    } else if (error.shortMessage?.includes("No prize to claim")) {
+    } else if (error.message.includes("No prize to claim")) {
       console.log(chalk.yellow("\nNo prize to claim for this game."));
     } else {
       console.error(chalk.red("\nError:"), error.shortMessage || error.message);

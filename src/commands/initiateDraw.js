@@ -19,15 +19,13 @@ async function initiateDrawHandler() {
     console.log(chalk.cyan("Transaction Hash:"), txHash);
     console.log(chalk.green("\nDraw initiated successfully!"));
   } catch (error) {
-    if (
-      error.shortMessage?.includes("Draw already initiated for current game")
-    ) {
+    if (error.message.includes("Draw already initiated for current game")) {
       console.log(chalk.yellow("Draw already initiated."));
-    } else if (error.shortMessage?.includes("Time interval not passed")) {
+    } else if (error.message.includes("Time interval not passed")) {
       console.log(
         chalk.yellow("Cannot initiate draw, time interval not yet reached.")
       );
-    } else if (error.shortMessage?.includes("Insufficient prize pool")) {
+    } else if (error.message.includes("Insufficient prize pool")) {
       console.log(
         chalk.yellow(
           "Cannot initiate draw, prize pool threshold not yet reached."

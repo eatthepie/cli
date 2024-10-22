@@ -1,7 +1,7 @@
 {
   "name": "eatthepie-cli",
   "version": "1.0.0",
-  "description": "CLI for interacting with the EatThePie Ethereum lottery",
+  "description": "CLI app for playing the EatThePie lottery on Ethereum",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
     "lottery",
     "cli"
   ],
-  "author": "wd021",
+  "author": "eatthepie.eth",
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",

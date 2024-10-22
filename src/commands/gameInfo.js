@@ -34,7 +34,7 @@ async function gameInfoHandler() {
     );
 
     const status = GameStatus[Number(gameInfo.status)];
-    const vdfSubmitted = gameInfo.winningNumbers[0] !== 0;
+    const vdfSubmitted = gameInfo.winningNumbers[0] !== 0n;
 
     console.log(chalk.yellow(`\nGame ${gameNumber} Information:`));
     console.log(chalk.cyan("Status:"), status);
@@ -73,7 +73,10 @@ async function gameInfoHandler() {
       chalk.cyan("Payouts:"),
       status === "Completed"
         ? gameInfo.payouts
-            .map((payout) => `${formatEther(payout)} ETH`)
+            .map((payout, index) => {
+              const labels = ["Jackpot", "3 in-a-row", "2 in-a-row"];
+              return `${labels[index]}: ${formatEther(payout)} ETH`;
+            })
             .join(", ")
         : "-"
     );

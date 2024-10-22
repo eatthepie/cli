@@ -2,7 +2,7 @@
 
 # EatThePie CLI
 
-A command-line interface for playing and managing Eat The Pie lottery on Ethereum.
+A command-line interface for playing Eat The Pie lottery on Ethereum.
 
 ## 🚀 Quick Start
 
@@ -51,7 +51,9 @@ npx eatthepie
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/eatthepie-cli
+git clone https://github.com/eatthepie/cli
+
+cd cli
 
 # Install dependencies
 npm install

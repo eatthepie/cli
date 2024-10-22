@@ -24,8 +24,8 @@ async function changeDifficultyHandler() {
     console.log(chalk.green("\nDifficulty change initiated successfully!"));
   } catch (error) {
     if (
-      error.shortMessage?.includes("Not enough games played") ||
-      error.shortMessage?.includes("Too soon to change difficulty")
+      error.message.includes("Not enough games played") ||
+      error.message.includes("Too soon to change difficulty")
     ) {
       console.log(
         chalk.yellow(

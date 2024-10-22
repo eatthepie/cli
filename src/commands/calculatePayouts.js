@@ -43,11 +43,7 @@ async function calculatePayoutsHandler() {
       console.log(chalk.cyan("Block Number:"), receipt.blockNumber);
     } catch (error) {
       // If error is not "already calculated", rethrow it
-      if (
-        !error.shortMessage?.includes(
-          "Payouts already calculated for this game"
-        )
-      ) {
+      if (!error.message.includes("Payouts already calculated for this game")) {
         throw error;
       }
     }
@@ -61,9 +57,7 @@ async function calculatePayoutsHandler() {
     );
     await displayPayouts(gameNumber, payouts);
   } catch (error) {
-    if (
-      error.shortMessage?.includes("VDF proof not yet validated for this game")
-    ) {
+    if (error.message.includes("VDF proof not yet validated for this game")) {
       console.log(
         chalk.yellow(
           "Game still in progress. You can only calculate payouts once the VDF proof has been submitted."

@@ -71,7 +71,7 @@ async function didIWinHandler() {
       );
     }
   } catch (error) {
-    if (error.shortMessage?.includes("Game draw not completed yet")) {
+    if (error.message.includes("Game draw not completed yet")) {
       console.log(chalk.yellow("\nGame is not completed yet."));
     } else {
       console.error(chalk.red("\nError:"), error.shortMessage || error.message);
