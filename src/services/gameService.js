@@ -204,8 +204,6 @@ export async function getTicketHistory(
     toBlock: endBlock,
   });
 
-  console.log("events", events);
-
   return events;
 }
 

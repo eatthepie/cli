@@ -19,13 +19,13 @@ import calculatePayoutsCommand from "./commands/calculatePayouts.js";
 import changeDifficultyCommand from "./commands/changeDifficulty.js";
 
 yargs(hideBin(process.argv))
-  .command(configCommand)
   .command(setupCommand)
-  .command(buyCommand)
+  .command(configCommand)
   .command(statusCommand)
   .command(gameInfoCommand)
-  .command(didIWinCommand)
+  .command(buyCommand)
   .command(ticketHistoryCommand)
+  .command(didIWinCommand)
   .command(claimPrizeCommand)
   .command(mintNFTCommand)
   .command(initiateDrawCommand)
