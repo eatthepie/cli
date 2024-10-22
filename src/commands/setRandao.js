@@ -35,6 +35,6 @@ async function setRandaoHandler() {
 
 export default {
   command: "set-randao",
-  describe: "Set the RANDAO value for a specific game",
+  describe: "Set the RANDAO value",
   handler: setRandaoHandler,
 };

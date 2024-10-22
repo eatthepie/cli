@@ -44,6 +44,6 @@ async function infoHandler() {
 
 export default {
   command: "status",
-  describe: "Get the current game status",
+  describe: "Get the status of the current game",
   handler: infoHandler,
 };

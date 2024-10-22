@@ -85,6 +85,6 @@ async function gameInfoHandler() {
 
 export default {
   command: "game-info",
-  describe: "Get game information for a given round",
+  describe: "Get game information",
   handler: gameInfoHandler,
 };

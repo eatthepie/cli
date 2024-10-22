@@ -66,6 +66,6 @@ async function submitVDFProofHandler() {
 
 export default {
   command: "submit-vdf-proof",
-  describe: "Submit VDF proof for a specific game",
+  describe: "Submit a VDF proof",
   handler: submitVDFProofHandler,
 };

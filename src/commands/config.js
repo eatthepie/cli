@@ -46,6 +46,6 @@ async function displayConfig() {
 
 export default {
   command: "config",
-  describe: "Display current configuration",
+  describe: "Display your network, wallet, and contract settings",
   handler: displayConfig,
 };

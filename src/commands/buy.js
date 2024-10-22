@@ -125,6 +125,6 @@ async function buyHandler() {
 
 export default {
   command: "buy",
-  describe: "Buy lottery tickets",
+  describe: "Buy tickets",
   handler: buyHandler,
 };

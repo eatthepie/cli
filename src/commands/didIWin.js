@@ -12,12 +12,26 @@ async function didIWinHandler() {
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
 
-    const { gameNumber } = await inquirer.prompt([
+    const { gameNumber, walletAddress } = await inquirer.prompt([
       {
         type: "number",
         name: "gameNumber",
         message: "Enter the game number you want to check:",
         validate: (input) => input > 0 || "Please enter a valid game number",
+      },
+      {
+        type: "input",
+        name: "walletAddress",
+        message: "Enter wallet address:",
+        default: async () => {
+          const account = config.privateKey
+            ? privateKeyToAccount(config.privateKey).address
+            : "";
+          return account;
+        },
+        validate: (input) =>
+          /^0x[a-fA-F0-9]{40}$/.test(input) ||
+          "Please enter a valid Ethereum address",
       },
     ]);
 
@@ -25,7 +39,7 @@ async function didIWinHandler() {
       publicClient,
       config.contractAddress,
       gameNumber,
-      privateKeyToAccount(config.privateKey).address
+      walletAddress
     );
 
     if (winningInfo.goldWin || winningInfo.silverWin || winningInfo.bronzeWin) {

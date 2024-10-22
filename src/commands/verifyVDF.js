@@ -73,6 +73,6 @@ async function verifyVDFHandler() {
 
 export default {
   command: "verify-vdf",
-  describe: "Verify VDF proof for a past game",
+  describe: "Verify a VDF proof",
   handler: verifyVDFHandler,
 };

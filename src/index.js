@@ -8,7 +8,6 @@ import statusCommand from "./commands/status.js";
 import gameInfoCommand from "./commands/gameInfo.js";
 import difficultyInfoCommand from "./commands/difficultyInfo.js";
 import didIWinCommand from "./commands/didIWin.js";
-import didWalletWinCommand from "./commands/didWalletWin.js";
 import ticketHistoryCommand from "./commands/ticketHistory.js";
 import claimPrizeCommand from "./commands/claimPrize.js";
 import mintNFTCommand from "./commands/mintNFT.js";
@@ -26,7 +25,6 @@ yargs(hideBin(process.argv))
   .command(statusCommand)
   .command(gameInfoCommand)
   .command(didIWinCommand)
-  .command(didWalletWinCommand)
   .command(ticketHistoryCommand)
   .command(claimPrizeCommand)
   .command(mintNFTCommand)

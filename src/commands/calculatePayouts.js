@@ -78,6 +78,6 @@ async function calculatePayoutsHandler() {
 
 export default {
   command: "calculate-payouts",
-  describe: "Calculate payouts for a specific game",
+  describe: "Calculate payouts",
   handler: calculatePayoutsHandler,
 };

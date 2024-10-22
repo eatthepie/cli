@@ -42,6 +42,6 @@ async function initiateDrawHandler() {
 
 export default {
   command: "initiate-draw",
-  describe: "Initiate the draw for the current game",
+  describe: "Initiate the draw",
   handler: initiateDrawHandler,
 };

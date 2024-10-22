@@ -34,6 +34,6 @@ async function mintNFTHandler() {
 
 export default {
   command: "mint-nft",
-  describe: "Mint a winning NFT for a specific game",
+  describe: "Mint your jackpot NFT",
   handler: mintNFTHandler,
 };

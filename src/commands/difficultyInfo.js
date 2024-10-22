@@ -49,6 +49,6 @@ async function difficultyInfoHandler() {
 
 export default {
   command: "difficulty-info",
-  describe: "Get information about the current difficulty",
+  describe: "Get difficulty information",
   handler: difficultyInfoHandler,
 };

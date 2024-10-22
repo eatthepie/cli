@@ -51,6 +51,6 @@ async function setupHandler() {
 
 export default {
   command: "setup",
-  describe: "Run the interactive setup",
+  describe: "Setup your network, wallet, and contract settings",
   handler: setupHandler,
 };

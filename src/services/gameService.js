@@ -141,15 +141,72 @@ export async function getTicketHistory(
   publicClient,
   contractAddress,
   gameNumber,
-  userAddress
+  walletAddress
 ) {
-  // This function is not directly available in the smart contract.
-  // You might need to implement this by querying events or storing ticket data off-chain.
-  // For now, we'll return a placeholder.
-  console.log(
-    "getTicketHistory: This function needs to be implemented based on your data storage strategy."
-  );
-  return [];
+  const gameStartBlock = await publicClient.readContract({
+    address: contractAddress,
+    abi: contractABI,
+    functionName: "gameStartBlock",
+    args: [BigInt(gameNumber)],
+  });
+
+  let endBlock;
+  try {
+    const nextGameStartBlock = await publicClient.readContract({
+      address: contractAddress,
+      abi: contractABI,
+      functionName: "gameStartBlock",
+      args: [BigInt(gameNumber + 1)],
+    });
+    endBlock = nextGameStartBlock;
+  } catch {
+    endBlock = await publicClient.getBlockNumber();
+  }
+
+  const events = await publicClient.getLogs({
+    address: contractAddress,
+    event: {
+      type: "event",
+      name: "TicketPurchased",
+      inputs: [
+        {
+          name: "player",
+          type: "address",
+          indexed: true,
+          internalType: "address",
+        },
+        {
+          name: "gameNumber",
+          type: "uint256",
+          indexed: false,
+          internalType: "uint256",
+        },
+        {
+          name: "numbers",
+          type: "uint256[3]",
+          indexed: false,
+          internalType: "uint256[3]",
+        },
+        {
+          name: "etherball",
+          type: "uint256",
+          indexed: false,
+          internalType: "uint256",
+        },
+      ],
+      anonymous: false,
+    },
+    args: {
+      player: walletAddress,
+      gameNumber: BigInt(gameNumber),
+    },
+    fromBlock: gameStartBlock,
+    toBlock: endBlock,
+  });
+
+  console.log("events", events);
+
+  return events;
 }
 
 export async function claimPrize(walletClient, contractAddress, gameNumber) {

@@ -41,6 +41,6 @@ async function changeDifficultyHandler() {
 
 export default {
   command: "change-difficulty",
-  describe: "Initiate a change in game difficulty",
+  describe: "Change the difficulty of the game",
   handler: changeDifficultyHandler,
 };

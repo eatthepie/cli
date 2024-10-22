@@ -41,6 +41,6 @@ async function claimPrizeHandler() {
 
 export default {
   command: "claim-prize",
-  describe: "Claim your prize for a specific game",
+  describe: "Claim your prize",
   handler: claimPrizeHandler,
 };
