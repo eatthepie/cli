@@ -4,7 +4,7 @@ import {
   http,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { mainnet, sepolia } from "viem/chains";
+import { mainnet, sepolia, localhost } from "viem/chains";
 
 export function createPublicClient(config) {
   const chain = getChain(config.network);

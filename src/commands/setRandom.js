@@ -1,12 +1,13 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
-import { createWalletClient } from "../utils/ethereum.js";
+import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
 import { setRandom } from "../services/gameService.js";
 
 async function setRandomHandler() {
   try {
     const config = await loadConfig();
+    const publicClient = createPublicClient(config);
     const walletClient = createWalletClient(config);
 
     const { gameNumber } = await inquirer.prompt([
@@ -18,26 +19,14 @@ async function setRandomHandler() {
       },
     ]);
 
-    const { confirm } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "confirm",
-        message: `Are you sure you want to set the random value for game ${gameNumber}?`,
-        default: false,
-      },
-    ]);
-
-    if (confirm) {
-      const txHash = await setRandom(
-        walletClient,
-        config.contractAddress,
-        gameNumber
-      );
-      console.log(chalk.green("\nRandom value set successfully!"));
-      console.log(chalk.cyan("Transaction Hash:"), txHash);
-    } else {
-      console.log(chalk.yellow("\nRandom value setting cancelled."));
-    }
+    const txHash = await setRandom(
+      walletClient,
+      publicClient,
+      config.contractAddress,
+      gameNumber
+    );
+    console.log(chalk.green("\nRandom value set successfully!"));
+    console.log(chalk.cyan("Transaction Hash:"), txHash);
   } catch (error) {
     console.error(chalk.red("Error setting random value:"), error);
   }

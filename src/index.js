@@ -2,8 +2,9 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import setupCommand from "./commands/setup.js";
-import currentGameCommand from "./commands/currentGame.js";
-import pastGameCommand from "./commands/pastGame.js";
+import buyCommand from "./commands/buy.js";
+import statusCommand from "./commands/status.js";
+import gameInfoCommand from "./commands/gameInfo.js";
 import difficultyInfoCommand from "./commands/difficultyInfo.js";
 import userWinningInfoCommand from "./commands/userWinningInfo.js";
 import didIWinCommand from "./commands/didIWin.js";
@@ -19,9 +20,9 @@ import changeDifficultyCommand from "./commands/changeDifficulty.js";
 
 yargs(hideBin(process.argv))
   .command(setupCommand)
-  .command(currentGameCommand)
-  .command(pastGameCommand)
-  .command(difficultyInfoCommand)
+  .command(buyCommand)
+  .command(statusCommand)
+  .command(gameInfoCommand)
   .command(userWinningInfoCommand)
   .command(didIWinCommand)
   .command(ticketHistoryCommand)
@@ -32,6 +33,7 @@ yargs(hideBin(process.argv))
   .command(submitVDFProofCommand)
   .command(verifyVDFCommand)
   .command(calculatePayoutsCommand)
+  .command(difficultyInfoCommand)
   .command(changeDifficultyCommand)
   .demandCommand(1, "You need at least one command before moving on")
   .help().argv;

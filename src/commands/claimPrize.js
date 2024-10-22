@@ -1,12 +1,13 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
-import { createWalletClient } from "../utils/ethereum.js";
+import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
 import { claimPrize } from "../services/gameService.js";
 
 async function claimPrizeHandler() {
   try {
     const config = await loadConfig();
+    const publicClient = createPublicClient(config);
     const walletClient = createWalletClient(config);
 
     const { gameNumber } = await inquirer.prompt([
@@ -18,28 +19,24 @@ async function claimPrizeHandler() {
       },
     ]);
 
-    const { confirm } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "confirm",
-        message: "Are you sure you want to claim the prize?",
-        default: false,
-      },
-    ]);
-
-    if (confirm) {
-      const txHash = await claimPrize(
-        walletClient,
-        config.contractAddress,
-        gameNumber
-      );
-      console.log(chalk.green("\nPrize claimed successfully!"));
-      console.log(chalk.cyan("Transaction Hash:"), txHash);
-    } else {
-      console.log(chalk.yellow("\nPrize claim cancelled."));
-    }
+    const txHash = await claimPrize(
+      walletClient,
+      publicClient,
+      config.contractAddress,
+      gameNumber
+    );
+    console.log(chalk.green("\nPrize claimed successfully!"));
+    console.log(chalk.cyan("Transaction Hash:"), txHash);
   } catch (error) {
-    console.error(chalk.red("Error claiming prize:"), error);
+    if (error.shortMessage?.includes("No prize to claim")) {
+      console.log(chalk.yellow("\nNo prize to claim for this game."));
+    } else {
+      console.error(
+        chalk.red("\nError claiming prize:"),
+        error.shortMessage || error.message
+      );
+      process.exit(1);
+    }
   }
 }
 

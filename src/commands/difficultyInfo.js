@@ -14,7 +14,7 @@ async function difficultyInfoHandler() {
       config.contractAddress
     );
 
-    console.log(chalk.yellow("\nCurrent Difficulty Information:"));
+    console.log(chalk.yellow("\nCurrent Difficulty:"));
     console.log(
       chalk.cyan("Current Difficulty:"),
       formatDifficulty(gameInfo.difficulty)

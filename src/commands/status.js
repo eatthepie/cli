@@ -14,8 +14,11 @@ async function infoHandler() {
       config.contractAddress
     );
 
-    console.log(chalk.cyan("Current Game Information:"));
-    console.log(chalk.yellow("Game Number:"), gameInfo.gameNumber.toString());
+    console.log(chalk.cyan("Status:"));
+    console.log(
+      chalk.yellow("Current Game Round:"),
+      gameInfo.gameNumber.toString()
+    );
     console.log(
       chalk.yellow("Difficulty:"),
       formatDifficulty(gameInfo.difficulty)
@@ -39,7 +42,7 @@ async function infoHandler() {
 }
 
 export default {
-  command: "info",
-  describe: "Get current game information",
+  command: "status",
+  describe: "Get the current game status",
   handler: infoHandler,
 };

@@ -15,3 +15,7 @@ export function generateRandomTicket(limits) {
     Math.floor(Math.random() * limits.etherballMax) + 1,
   ];
 }
+
+export const convertWeiToEth = (wei) => {
+  return Number(wei) / 1e18;
+};

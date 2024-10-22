@@ -6,7 +6,14 @@ import { getDetailedGameInfo } from "../services/gameService.js";
 import { formatDifficulty } from "../utils/display.js";
 import { formatEther } from "viem";
 
-async function pastGameHandler() {
+// Enum mapping for GameStatus
+const GameStatus = {
+  0: "InPlay",
+  1: "Drawing",
+  2: "Completed",
+};
+
+async function gameInfoHandler() {
   try {
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
@@ -26,20 +33,15 @@ async function pastGameHandler() {
       gameNumber
     );
 
+    const status = GameStatus[Number(gameInfo.status)];
+    const vdfSubmitted = gameInfo.winningNumbers[0] !== 0;
+
     console.log(chalk.yellow(`\nGame ${gameNumber} Information:`));
-    console.log(chalk.cyan("Status:"), gameInfo.status);
+    console.log(chalk.cyan("Status:"), status);
     console.log(
       chalk.cyan("Prize Pool:"),
       formatEther(gameInfo.prizePool),
       "ETH"
-    );
-    console.log(
-      chalk.cyan("Number of Winners:"),
-      gameInfo.numberOfWinners.toString()
-    );
-    console.log(
-      chalk.cyan("Winning Numbers:"),
-      gameInfo.winningNumbers.join(", ")
     );
     console.log(
       chalk.cyan("Difficulty:"),
@@ -47,13 +49,33 @@ async function pastGameHandler() {
     );
     console.log(
       chalk.cyan("Draw Initiated Block:"),
-      gameInfo.drawInitiatedBlock.toString()
+      status === "InPlay" ? "-" : gameInfo.drawInitiatedBlock.toString()
     );
-    console.log(chalk.cyan("RANDAO Block:"), gameInfo.randaoBlock.toString());
-    console.log(chalk.cyan("RANDAO Value:"), gameInfo.randaoValue.toString());
+    console.log(
+      chalk.cyan("RANDAO Block:"),
+      status === "InPlay" ? "-" : gameInfo.randaoBlock.toString()
+    );
+    console.log(
+      chalk.cyan("RANDAO Value:"),
+      status === "InPlay" || !gameInfo.randaoValue
+        ? "-"
+        : gameInfo.randaoValue.toString()
+    );
+    console.log(
+      chalk.cyan("Number of Winners:"),
+      vdfSubmitted ? gameInfo.numberOfWinners.toString() : "-"
+    );
+    console.log(
+      chalk.cyan("Winning Numbers:"),
+      vdfSubmitted ? gameInfo.winningNumbers.join(", ") : "-"
+    );
     console.log(
       chalk.cyan("Payouts:"),
-      gameInfo.payouts.map((payout) => `${formatEther(payout)} ETH`).join(", ")
+      status === "Completed"
+        ? gameInfo.payouts
+            .map((payout) => `${formatEther(payout)} ETH`)
+            .join(", ")
+        : "-"
     );
   } catch (error) {
     console.error(chalk.red("Error fetching past game info:"), error);
@@ -61,7 +83,7 @@ async function pastGameHandler() {
 }
 
 export default {
-  command: "past-game",
-  describe: "Get information about a past game",
-  handler: pastGameHandler,
+  command: "game-info",
+  describe: "Get game information for a given round",
+  handler: gameInfoHandler,
 };

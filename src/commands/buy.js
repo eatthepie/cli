@@ -1,18 +1,16 @@
 import chalk from "chalk";
 import inquirer from "inquirer";
-import { loadConfig } from "../utils/config.js";
-import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
+import { formatEther } from "viem";
+
 import {
   buyTickets,
   getTicketPrice,
   getCurrentGameInfo,
 } from "../services/gameService.js";
-import {
-  generateRandomTicket,
-  getDifficultyLimits,
-} from "../utils/ticketUtils.js";
+import { loadConfig } from "../utils/config.js";
+import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
+import { generateRandomTicket, getDifficultyLimits } from "../utils/helpers.js";
 import { formatDifficulty } from "../utils/display.js";
-import { formatEther } from "viem";
 
 async function buyHandler() {
   try {
@@ -109,17 +107,22 @@ async function buyHandler() {
     if (confirm) {
       const result = await buyTickets(
         walletClient,
+        publicClient,
         config.contractAddress,
         tickets,
         totalPrice
       );
-      console.log(chalk.green("Tickets purchased successfully!"));
       console.log(chalk.yellow("Transaction Hash:"), result);
+      console.log(chalk.green("Tickets purchased successfully!"));
     } else {
       console.log(chalk.yellow("Purchase cancelled."));
     }
   } catch (error) {
-    console.error(chalk.red("Error buying tickets:"), error);
+    console.error(
+      chalk.red("\nError buying tickets:"),
+      error.shortMessage || error.message
+    );
+    process.exit(1);
   }
 }
 

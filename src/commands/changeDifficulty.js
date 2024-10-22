@@ -1,38 +1,27 @@
-import inquirer from "inquirer";
 import chalk from "chalk";
-import { loadConfig } from "../utils/config.js";
-import { createWalletClient } from "../utils/ethereum.js";
+
 import { changeDifficulty } from "../services/gameService.js";
+import { loadConfig } from "../utils/config.js";
+import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
 
 async function changeDifficultyHandler() {
   try {
     const config = await loadConfig();
+    const publicClient = createPublicClient(config);
     const walletClient = createWalletClient(config);
 
-    const { confirm } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "confirm",
-        message: "Are you sure you want to change the game difficulty?",
-        default: false,
-      },
-    ]);
-
-    if (confirm) {
-      const txHash = await changeDifficulty(
-        walletClient,
-        config.contractAddress
-      );
-      console.log(chalk.green("\nDifficulty change initiated successfully!"));
-      console.log(chalk.cyan("Transaction Hash:"), txHash);
-      console.log(
-        chalk.yellow(
-          "Note: The difficulty change will take effect in a future game."
-        )
-      );
-    } else {
-      console.log(chalk.yellow("\nDifficulty change cancelled."));
-    }
+    const txHash = await changeDifficulty(
+      walletClient,
+      publicClient,
+      config.contractAddress
+    );
+    console.log(chalk.green("\nDifficulty change initiated successfully!"));
+    console.log(chalk.cyan("Transaction Hash:"), txHash);
+    console.log(
+      chalk.yellow(
+        "Note: The difficulty change will take effect in a future game."
+      )
+    );
   } catch (error) {
     console.error(chalk.red("Error changing difficulty:"), error);
   }

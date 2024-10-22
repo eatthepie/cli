@@ -1,24 +1,26 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import fs from "fs";
+import { pad } from "viem";
 import { loadConfig } from "../utils/config.js";
 import { createPublicClient } from "../utils/ethereum.js";
 import { verifyPastGameVDF } from "../services/gameService.js";
 
 function prepareBigNumber(valHex, bitlen) {
   const prefixedHex = valHex.startsWith("0x") ? valHex : `0x${valHex}`;
-  const paddedHex = prefixedHex.padEnd(Math.ceil(bitlen / 8) * 2 + 2, "0");
+  const paddedHex = pad(prefixedHex, { size: Math.ceil(bitlen / 8) });
+
   return {
     val: paddedHex,
     bitlen: BigInt(bitlen),
   };
 }
 
-function prepareProofData(proofData) {
+const prepareProofData = (proofData) => {
   const y = prepareBigNumber(proofData.y.val, proofData.y.bitlen);
   const v = proofData.v.map((bn) => prepareBigNumber(bn.val, bn.bitlen));
   return { v, y };
-}
+};
 
 async function verifyVDFHandler() {
   try {
@@ -36,6 +38,7 @@ async function verifyVDFHandler() {
         type: "input",
         name: "proofFilePath",
         message: "Enter the path to the proof.json file:",
+        default: "proof.json",
         validate: (input) =>
           fs.existsSync(input) || "Please enter a valid file path",
       },
@@ -45,8 +48,6 @@ async function verifyVDFHandler() {
     const { v, y } = prepareProofData(proofData);
 
     console.log(chalk.cyan("Verifying VDF proof..."));
-    console.log(chalk.cyan("v:"), v);
-    console.log(chalk.cyan("y:"), y);
 
     const { calculatedNumbers, isValid } = await verifyPastGameVDF(
       publicClient,
@@ -57,11 +58,10 @@ async function verifyVDFHandler() {
     );
 
     if (isValid) {
-      console.log(chalk.green("\nVDF proof verified successfully!"));
       console.log(
-        chalk.cyan("Calculated Numbers:"),
-        calculatedNumbers.join(", ")
+        chalk.green(`\nGame ${gameNumber} VDF verified successfully!`)
       );
+      console.log(chalk.cyan("Winning Numbers:"), calculatedNumbers.join(", "));
     } else {
       console.log(chalk.red("\nVDF proof verification failed."));
     }

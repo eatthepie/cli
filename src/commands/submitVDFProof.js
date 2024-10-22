@@ -37,7 +37,7 @@ async function submitVDFProofHandler() {
       {
         type: "input",
         name: "proofFilePath",
-        message: "Enter the path to the proof.json file:",
+        message: "Enter the path to the proof file (proof.json):",
         validate: (input) =>
           fs.existsSync(input) || "Please enter a valid file path",
       },
@@ -47,53 +47,17 @@ async function submitVDFProofHandler() {
     const { v, y } = prepareProofData(proofData);
 
     console.log(chalk.cyan("Submitting VDF proof..."));
-    console.log(chalk.cyan("v:"), v);
-    console.log(chalk.cyan("y:"), y);
 
-    const { confirm } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "confirm",
-        message: "Do you want to proceed with submitting the VDF proof?",
-        default: false,
-      },
-    ]);
-
-    if (confirm) {
-      try {
-        const simulationResult = await publicClient.simulateContract({
-          address: config.contractAddress,
-          abi: config.contractABI,
-          functionName: "submitVDFProof",
-          args: [BigInt(gameNumber), v, y],
-          account: walletClient.account,
-        });
-        console.log(chalk.green("Simulation successful:"), simulationResult);
-      } catch (simulationError) {
-        console.error(chalk.red("Simulation failed:"), simulationError);
-        if (simulationError.cause?.data) {
-          const decodedError = decodeErrorResult({
-            abi: config.contractABI,
-            data: simulationError.cause.data,
-          });
-          console.error(chalk.red("Decoded error:"), decodedError);
-        }
-        throw simulationError;
-      }
-
-      const txHash = await submitVDFProof(
-        walletClient,
-        publicClient,
-        config.contractAddress,
-        gameNumber,
-        v,
-        y
-      );
-      console.log(chalk.green("\nVDF proof submitted successfully!"));
-      console.log(chalk.cyan("Transaction Hash:"), txHash);
-    } else {
-      console.log(chalk.yellow("\nVDF proof submission cancelled."));
-    }
+    const txHash = await submitVDFProof(
+      walletClient,
+      publicClient,
+      config.contractAddress,
+      gameNumber,
+      v,
+      y
+    );
+    console.log(chalk.green("\nVDF proof submitted successfully!"));
+    console.log(chalk.cyan("Transaction Hash:"), txHash);
   } catch (error) {
     console.error(chalk.red("Error submitting VDF proof:"), error);
     if (error.cause?.data) {

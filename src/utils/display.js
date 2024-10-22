@@ -1,5 +1,6 @@
 import figlet from "figlet";
 import chalk from "chalk";
+import { convertWeiToEth } from "./helpers.js";
 
 export function displayBanner() {
   console.log(
@@ -23,4 +24,22 @@ export function formatTimeUntilDraw(seconds) {
 export function formatDifficulty(difficulty) {
   const difficultyMap = ["Easy", "Medium", "Hard"];
   return difficultyMap[difficulty] || "Unknown";
+}
+
+export function displayPayouts(gameNumber, payouts) {
+  const payoutsInEth = payouts.map(convertWeiToEth);
+
+  console.log(chalk.yellow(`\nGame ${gameNumber} Payouts:`));
+  console.log(
+    chalk.cyan("Jackpot:"),
+    chalk.white(payoutsInEth[0] ? `${payoutsInEth[0].toFixed(4)} ETH` : "-")
+  );
+  console.log(
+    chalk.cyan("3 in-a-row:"),
+    chalk.white(payoutsInEth[1] ? `${payoutsInEth[1].toFixed(4)} ETH` : "-")
+  );
+  console.log(
+    chalk.cyan("2 in-a-row:"),
+    chalk.white(payoutsInEth[2] ? `${payoutsInEth[2].toFixed(4)} ETH` : "-")
+  );
 }

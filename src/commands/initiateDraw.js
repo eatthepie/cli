@@ -1,33 +1,41 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
-import { createWalletClient } from "../utils/ethereum.js";
+import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
 import { initiateDraw } from "../services/gameService.js";
 
 async function initiateDrawHandler() {
   try {
     const config = await loadConfig();
+    const publicClient = createPublicClient(config);
     const walletClient = createWalletClient(config);
 
-    const { confirm } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "confirm",
-        message:
-          "Are you sure you want to initiate the draw for the current game?",
-        default: false,
-      },
-    ]);
+    const txHash = await initiateDraw(
+      walletClient,
+      publicClient,
+      config.contractAddress
+    );
 
-    if (confirm) {
-      const txHash = await initiateDraw(walletClient, config.contractAddress);
-      console.log(chalk.green("\nDraw initiated successfully!"));
-      console.log(chalk.cyan("Transaction Hash:"), txHash);
-    } else {
-      console.log(chalk.yellow("\nDraw initiation cancelled."));
-    }
+    console.log(chalk.cyan("Transaction Hash:"), txHash);
+    console.log(chalk.green("\nDraw initiated successfully!"));
   } catch (error) {
-    console.error(chalk.red("Error initiating draw:"), error);
+    if (
+      error.shortMessage?.includes("Draw already initiated for current game")
+    ) {
+      console.log(chalk.yellow("Draw already initiated."));
+    } else if (error.shortMessage?.includes("Time interval not passed")) {
+      console.log(
+        chalk.yellow("Cannot initiate draw, time interval not yet reached.")
+      );
+    } else if (error.shortMessage?.includes("Insufficient prize pool")) {
+      console.log(
+        chalk.yellow(
+          "Cannot initiate draw, prize pool threshold not yet reached."
+        )
+      );
+    } else {
+      console.error(chalk.red("Error initiating draw:"), error);
+    }
   }
 }
 

@@ -1,9 +1,11 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
+import { formatEther } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+
+import { getUserGameWinnings } from "../services/gameService.js";
 import { loadConfig } from "../utils/config.js";
 import { createPublicClient } from "../utils/ethereum.js";
-import { getUserGameWinnings } from "../services/gameService.js";
-import { formatEther } from "viem";
 
 async function didIWinHandler() {
   try {
@@ -23,19 +25,18 @@ async function didIWinHandler() {
       publicClient,
       config.contractAddress,
       gameNumber,
-      config.address
+      privateKeyToAccount(config.privateKey).address
     );
 
     if (winningInfo.goldWin || winningInfo.silverWin || winningInfo.bronzeWin) {
       console.log(chalk.green("\nCongratulations! You won in this game!"));
-      console.log(chalk.yellow("\nDetailed Winning Information:"));
-      console.log(chalk.cyan("Gold Win:"), winningInfo.goldWin ? "Yes" : "No");
+      console.log(chalk.cyan("Jackpot:"), winningInfo.goldWin ? "Yes" : "No");
       console.log(
-        chalk.cyan("Silver Win:"),
+        chalk.cyan("3 in-a-row:"),
         winningInfo.silverWin ? "Yes" : "No"
       );
       console.log(
-        chalk.cyan("Bronze Win:"),
+        chalk.cyan("2 in-a-row:"),
         winningInfo.bronzeWin ? "Yes" : "No"
       );
       console.log(
@@ -56,7 +57,15 @@ async function didIWinHandler() {
       );
     }
   } catch (error) {
-    console.error(chalk.red("Error checking win status:"), error);
+    if (error.shortMessage?.includes("Game draw not completed yet")) {
+      console.log(
+        chalk.yellow(
+          "\nGame is not completed yet. Please wait for the game to end."
+        )
+      );
+    } else {
+      console.error(chalk.red("Error checking win status:"), error);
+    }
   }
 }
 
