@@ -15,15 +15,27 @@ async function changeDifficultyHandler() {
       publicClient,
       config.contractAddress
     );
-    console.log(chalk.green("\nDifficulty change initiated successfully!"));
     console.log(chalk.cyan("Transaction Hash:"), txHash);
     console.log(
       chalk.yellow(
-        "Note: The difficulty change will take effect in a future game."
+        "Note: If the conditions for a difficulty change are met, the change will take effect in the next game."
       )
     );
+    console.log(chalk.green("\nDifficulty change initiated successfully!"));
   } catch (error) {
-    console.error(chalk.red("Error changing difficulty:"), error);
+    if (
+      error.shortMessage?.includes("Not enough games played") ||
+      error.shortMessage?.includes("Too soon to change difficulty")
+    ) {
+      console.log(
+        chalk.yellow(
+          "Cannot change difficulty yet. Not enough games played or too soon since last change."
+        )
+      );
+    } else {
+      console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+      process.exit(1);
+    }
   }
 }
 

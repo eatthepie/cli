@@ -42,7 +42,8 @@ async function difficultyInfoHandler() {
       chalk.green("\nWhen buying tickets, choose numbers within these ranges.")
     );
   } catch (error) {
-    console.error(chalk.red("Error fetching difficulty info:"), error);
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    process.exit(1);
   }
 }
 

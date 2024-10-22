@@ -66,7 +66,8 @@ async function verifyVDFHandler() {
       console.log(chalk.red("\nVDF proof verification failed."));
     }
   } catch (error) {
-    console.error(chalk.red("Error verifying VDF proof:"), error);
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    process.exit(1);
   }
 }
 

@@ -78,7 +78,8 @@ async function gameInfoHandler() {
         : "-"
     );
   } catch (error) {
-    console.error(chalk.red("Error fetching past game info:"), error);
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    process.exit(1);
   }
 }
 

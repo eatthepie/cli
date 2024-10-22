@@ -34,7 +34,8 @@ async function initiateDrawHandler() {
         )
       );
     } else {
-      console.error(chalk.red("Error initiating draw:"), error);
+      console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+      process.exit(1);
     }
   }
 }

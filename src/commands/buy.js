@@ -118,10 +118,7 @@ async function buyHandler() {
       console.log(chalk.yellow("Purchase cancelled."));
     }
   } catch (error) {
-    console.error(
-      chalk.red("\nError buying tickets:"),
-      error.shortMessage || error.message
-    );
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
     process.exit(1);
   }
 }

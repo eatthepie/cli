@@ -2,9 +2,9 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
 import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
-import { setRandom } from "../services/gameService.js";
+import { setRandao } from "../services/gameService.js";
 
-async function setRandomHandler() {
+async function setRandaoHandler() {
   try {
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
@@ -14,26 +14,27 @@ async function setRandomHandler() {
       {
         type: "number",
         name: "gameNumber",
-        message: "Enter the game number to set the random value for:",
+        message: "Enter the game number to set the RANDAO value for:",
         validate: (input) => input > 0 || "Please enter a valid game number",
       },
     ]);
 
-    const txHash = await setRandom(
+    const txHash = await setRandao(
       walletClient,
       publicClient,
       config.contractAddress,
       gameNumber
     );
-    console.log(chalk.green("\nRandom value set successfully!"));
     console.log(chalk.cyan("Transaction Hash:"), txHash);
+    console.log(chalk.green("\nRANDAO value set successfully!"));
   } catch (error) {
-    console.error(chalk.red("Error setting random value:"), error);
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    process.exit(1);
   }
 }
 
 export default {
-  command: "set-random",
-  describe: "Set the random value for a specific game",
-  handler: setRandomHandler,
+  command: "set-randao",
+  describe: "Set the RANDAO value for a specific game",
+  handler: setRandaoHandler,
 };

@@ -32,14 +32,20 @@ export function displayPayouts(gameNumber, payouts) {
   console.log(chalk.yellow(`\nGame ${gameNumber} Payouts:`));
   console.log(
     chalk.cyan("Jackpot:"),
-    chalk.white(payoutsInEth[0] ? `${payoutsInEth[0].toFixed(4)} ETH` : "-")
+    chalk.white(
+      payoutsInEth[0] ? `${payoutsInEth[0].toFixed(4)} ETH` : "no winners"
+    )
   );
   console.log(
     chalk.cyan("3 in-a-row:"),
-    chalk.white(payoutsInEth[1] ? `${payoutsInEth[1].toFixed(4)} ETH` : "-")
+    chalk.white(
+      payoutsInEth[1] ? `${payoutsInEth[1].toFixed(4)} ETH` : "no winners"
+    )
   );
   console.log(
     chalk.cyan("2 in-a-row:"),
-    chalk.white(payoutsInEth[2] ? `${payoutsInEth[2].toFixed(4)} ETH` : "-")
+    chalk.white(
+      payoutsInEth[2] ? `${payoutsInEth[2].toFixed(4)} ETH` : "no winners"
+    )
   );
 }

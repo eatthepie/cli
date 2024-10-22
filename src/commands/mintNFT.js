@@ -1,13 +1,12 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
-import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
+import { createWalletClient } from "../utils/ethereum.js";
 import { mintWinningNFT } from "../services/gameService.js";
 
 async function mintNFTHandler() {
   try {
     const config = await loadConfig();
-    const publicClient = createPublicClient(config);
     const walletClient = createWalletClient(config);
 
     const { gameNumber } = await inquirer.prompt([
@@ -22,14 +21,14 @@ async function mintNFTHandler() {
 
     const txHash = await mintWinningNFT(
       walletClient,
-      publicClient,
       config.contractAddress,
       gameNumber
     );
     console.log(chalk.green("\nWinning NFT minted successfully!"));
     console.log(chalk.cyan("Transaction Hash:"), txHash);
   } catch (error) {
-    console.error(chalk.red("Error minting winning NFT:"), error);
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    process.exit(1);
   }
 }
 

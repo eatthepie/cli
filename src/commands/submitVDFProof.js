@@ -59,21 +59,8 @@ async function submitVDFProofHandler() {
     console.log(chalk.green("\nVDF proof submitted successfully!"));
     console.log(chalk.cyan("Transaction Hash:"), txHash);
   } catch (error) {
-    console.error(chalk.red("Error submitting VDF proof:"), error);
-    if (error.cause?.data) {
-      try {
-        const decodedError = decodeErrorResult({
-          abi: config.contractABI,
-          data: error.cause.data,
-        });
-        console.error(chalk.red("Decoded error:"), decodedError);
-      } catch (decodeError) {
-        console.error(chalk.red("Failed to decode error:"), decodeError);
-      }
-    }
-    if (error.message) {
-      console.error(chalk.red("Error message:"), error.message);
-    }
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    process.exit(1);
   }
 }
 

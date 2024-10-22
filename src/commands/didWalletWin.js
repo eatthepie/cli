@@ -1,22 +1,28 @@
 import inquirer from "inquirer";
 import chalk from "chalk";
-import { formatEther } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-
-import { getUserGameWinnings } from "../services/gameService.js";
 import { loadConfig } from "../utils/config.js";
 import { createPublicClient } from "../utils/ethereum.js";
+import { getUserGameWinnings } from "../services/gameService.js";
+import { formatEther } from "viem";
 
-async function didIWinHandler() {
+async function didWalletWinHandler() {
   try {
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
 
-    const { gameNumber } = await inquirer.prompt([
+    const { walletAddress, gameNumber } = await inquirer.prompt([
+      {
+        type: "input",
+        name: "walletAddress",
+        message: "Enter the wallet address:",
+        validate: (input) =>
+          /^0x[a-fA-F0-9]{40}$/.test(input) ||
+          "Please enter a valid Ethereum address",
+      },
       {
         type: "number",
         name: "gameNumber",
-        message: "Enter the game number you want to check:",
+        message: "Enter the game number:",
         validate: (input) => input > 0 || "Please enter a valid game number",
       },
     ]);
@@ -25,11 +31,11 @@ async function didIWinHandler() {
       publicClient,
       config.contractAddress,
       gameNumber,
-      privateKeyToAccount(config.privateKey).address
+      walletAddress
     );
 
     if (winningInfo.goldWin || winningInfo.silverWin || winningInfo.bronzeWin) {
-      console.log(chalk.green("\nCongratulations, you won!"));
+      console.log(chalk.green(`\n${walletAddress} won!`));
       console.log(chalk.cyan("Jackpot:"), winningInfo.goldWin ? "Yes" : "No");
       console.log(
         chalk.cyan("3 in-a-row:"),
@@ -50,11 +56,7 @@ async function didIWinHandler() {
         console.log(chalk.green("\nDon't forget to claim your prize!"));
       }
     } else {
-      console.log(
-        chalk.yellow(
-          "\nSorry, you didn't win in this game. Better luck next time!"
-        )
-      );
+      console.log(chalk.yellow(`\${walletAddress} didn't win in this game.`));
     }
   } catch (error) {
     if (error.shortMessage?.includes("Game draw not completed yet")) {
@@ -67,7 +69,7 @@ async function didIWinHandler() {
 }
 
 export default {
-  command: "did-i-win",
-  describe: "Check if you won",
-  handler: didIWinHandler,
+  command: "did-wallet-win",
+  describe: "Check if a wallet won",
+  handler: didWalletWinHandler,
 };

@@ -61,8 +61,18 @@ async function calculatePayoutsHandler() {
     );
     await displayPayouts(gameNumber, payouts);
   } catch (error) {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
-    process.exit(1);
+    if (
+      error.shortMessage?.includes("VDF proof not yet validated for this game")
+    ) {
+      console.log(
+        chalk.yellow(
+          "Game still in progress. You can only calculate payouts once the VDF proof has been submitted."
+        )
+      );
+    } else {
+      console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+      process.exit(1);
+    }
   }
 }
 

@@ -152,42 +152,28 @@ export async function getTicketHistory(
   return [];
 }
 
-export async function claimPrize(
-  walletClient,
-  publicClient,
-  contractAddress,
-  gameNumber
-) {
-  console.log(
-    "claim prize for game number",
-    BigInt(gameNumber),
-    walletClient.account
-  );
-  const { request } = await publicClient.simulateContract({
+export async function claimPrize(walletClient, contractAddress, gameNumber) {
+  const hash = await walletClient.writeContract({
     address: contractAddress,
     abi: contractABI,
     functionName: "claimPrize",
     args: [gameNumber],
   });
 
-  const hash = await walletClient.writeContract(request);
   return hash;
 }
 
 export async function mintWinningNFT(
   walletClient,
-  publicClient,
   contractAddress,
   gameNumber
 ) {
-  const { request } = await publicClient.simulateContract({
+  const hash = await walletClient.writeContract({
     address: contractAddress,
     abi: contractABI,
     functionName: "mintWinningNFT",
     args: [BigInt(gameNumber)],
   });
-
-  const hash = await walletClient.writeContract(request);
   return hash;
 }
 
@@ -206,7 +192,7 @@ export async function initiateDraw(
   return hash;
 }
 
-export async function setRandom(
+export async function setRandao(
   walletClient,
   publicClient,
   contractAddress,

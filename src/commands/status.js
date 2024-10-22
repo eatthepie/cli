@@ -37,7 +37,8 @@ async function infoHandler() {
       formatTimeUntilDraw(Number(gameInfo.timeUntilDraw))
     );
   } catch (error) {
-    console.error(chalk.red("Error fetching game info:"), error);
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    process.exit(1);
   }
 }
 
