@@ -72,8 +72,8 @@ async function processPrizeClaim(walletClient, contractAddress, gameNumber) {
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.green(`\n${SUCCESS_MESSAGES.CLAIMED}`));
-  console.log(chalk.cyan("Transaction Hash:"), txHash);
+  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+  console.log(chalk.green(`${SUCCESS_MESSAGES.CLAIMED}`));
 }
 
 /**

@@ -8,11 +8,13 @@ import { displayBanner } from "../utils/display.js";
 const NETWORK_CONFIG = {
   MAINNET: {
     NAME: "mainnet",
-    RPC: "https://mainnet.infura.io/v3/YOUR-PROJECT-ID",
+    RPC: "https://cloudflare-eth.com",
+    CONTRACT: "0xmainnet",
   },
   SEPOLIA: {
     NAME: "sepolia",
-    RPC: "https://sepolia.infura.io/v3/YOUR-PROJECT-ID",
+    RPC: "https://rpc2.sepolia.org",
+    CONTRACT: "0xtestnet",
   },
 };
 
@@ -63,7 +65,7 @@ const setupQuestions = [
     type: "input",
     name: "contractAddress",
     message: "Enter the EatThePie contract address:",
-    default: DEFAULT_CONTRACT,
+    default: (answers) => getContractDefault(answers),
     validate: (input) =>
       VALIDATION.ETHEREUM_ADDRESS.PATTERN.test(input) ||
       VALIDATION.ETHEREUM_ADDRESS.MESSAGE,
@@ -71,7 +73,8 @@ const setupQuestions = [
   {
     type: "input",
     name: "rpcUrl",
-    message: "Enter the RPC URL:",
+    message:
+      "Enter the RPC URL (see chainlist.org for a list of public nodes):",
     default: (answers) => getRpcUrlDefault(answers),
     validate: (input) =>
       VALIDATION.RPC_URL.VALIDATE(input) || VALIDATION.RPC_URL.MESSAGE,
@@ -126,6 +129,17 @@ async function promptForConfiguration() {
 async function saveConfiguration(config) {
   await saveConfig(config);
   console.log(MESSAGES.SUCCESS);
+}
+
+/**
+ * Gets the default contract based on the selected network
+ * @param {Object} answers - The current answers object
+ * @returns {string} The default contract
+ */
+function getContractDefault(answers) {
+  return answers.network === NETWORK_CONFIG.MAINNET.NAME
+    ? NETWORK_CONFIG.MAINNET.CONTRACT
+    : NETWORK_CONFIG.SEPOLIA.CONTRACT;
 }
 
 /**

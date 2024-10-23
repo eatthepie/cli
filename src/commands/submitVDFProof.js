@@ -180,8 +180,8 @@ async function processProofSubmission(
  * @param {string} txHash - Transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.green(`\n${STATUS_MESSAGES.SUCCESS}`));
-  console.log(chalk.cyan("Transaction Hash:"), txHash);
+  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+  console.log(chalk.green(`${STATUS_MESSAGES.SUCCESS}`));
 }
 
 /**

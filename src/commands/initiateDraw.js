@@ -77,8 +77,8 @@ async function processDrawInitiation(
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.cyan("Transaction Hash:"), txHash);
-  console.log(chalk.green(`\n${SUCCESS_MESSAGES.DRAW_INITIATED}`));
+  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+  console.log(chalk.green(`${SUCCESS_MESSAGES.DRAW_INITIATED}`));
 }
 
 /**
