@@ -55,7 +55,7 @@ async function infoHandler() {
  * @param {Object} gameInfo - The current game information
  */
 function displayGameStatus(gameInfo) {
-  console.log(chalk.cyan("Status:"));
+  console.log(chalk.yellow("Status:"));
   displayStatusFields(gameInfo);
 }
 
@@ -98,7 +98,7 @@ function displayStatusFields(gameInfo) {
  * @param {string} value - The field value
  */
 function displayStatusField(label, value) {
-  console.log(chalk.yellow(label + ":"), value);
+  console.log(chalk.cyan(label + ":"), value);
 }
 
 /**

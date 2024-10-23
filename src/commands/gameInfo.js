@@ -35,6 +35,20 @@ const DISPLAY = {
 };
 
 /**
+ * Error messages that require special handling
+ */
+const ERROR_MESSAGES = {
+  GAME_NOT_STARTED: "Game ID exceeds current game",
+};
+
+/**
+ * Error response messages
+ */
+const ERROR_RESPONSES = {
+  GAME_NOT_STARTED: "Game number you entered exceeds the current active game.",
+};
+
+/**
  * Handles displaying detailed information about a specific game
  */
 async function gameInfoHandler() {
@@ -44,7 +58,6 @@ async function gameInfoHandler() {
 
     // Get game number from user
     const gameNumber = await promptForGameNumber();
-
     // Get and display game information
     const gameInfo = await getDetailedGameInfo(
       publicClient,
@@ -142,12 +155,18 @@ function displayBlockInfo(gameInfo, status) {
  */
 function displayWinningInfo(gameInfo, status, isVdfSubmitted) {
   console.log(
-    chalk.cyan("Number of Winners:"),
-    isVdfSubmitted ? gameInfo.numberOfWinners.toString() : DISPLAY.NOT_AVAILABLE
-  );
-  console.log(
     chalk.cyan("Winning Numbers:"),
     isVdfSubmitted ? gameInfo.winningNumbers.join(", ") : DISPLAY.NOT_AVAILABLE
+  );
+  console.log(
+    chalk.cyan("Number of Winners:"),
+    isVdfSubmitted
+      ? `${gameInfo.numberOfWinners.toString()} (Jackpot: ${
+          gameInfo.goldWinners
+        }, 3 in-a-row: ${gameInfo.silverWinners}, 2 in-a-row: ${
+          gameInfo.bronzeWinners
+        })`
+      : DISPLAY.NOT_AVAILABLE
   );
 
   displayPayouts(gameInfo, status);
@@ -185,13 +204,17 @@ function formatPayouts(payouts) {
  * @param {Error} error - The error to handle
  */
 function handleError(error) {
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
-  console.error(
-    chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
-    )
-  );
-  process.exit(1);
+  if (error.message.includes(ERROR_MESSAGES.GAME_NOT_STARTED)) {
+    console.log(chalk.yellow(ERROR_RESPONSES.GAME_NOT_STARTED));
+  } else {
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    console.error(
+      chalk.red(
+        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      )
+    );
+    process.exit(1);
+  }
 }
 
 export default {
