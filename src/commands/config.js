@@ -2,45 +2,123 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
 
+/**
+ * Configuration display settings
+ */
+const CONFIG_DISPLAY = {
+  MASKED_KEY_LENGTH: {
+    PREFIX: 6,
+    SUFFIX: 4,
+  },
+  DEFAULT_VALUE: "Not set",
+};
+
+/**
+ * Error messages
+ */
+const ERROR_MESSAGES = {
+  NO_CONFIG: "No configuration found. Please run 'setup' first.",
+  GENERIC: "Error reading configuration:",
+};
+
+/**
+ * Warning messages
+ */
+const WARNING_MESSAGES = {
+  PRIVATE_KEY: "Warning: Never share your private key with anyone!",
+};
+
+/**
+ * Handles the display of configuration settings including network,
+ * contract address, RPC URL, and optionally the private key.
+ */
 async function displayConfig() {
   try {
     const config = await loadConfig();
 
-    console.log(chalk.yellow("\nCurrent Configuration:"));
-    console.log(chalk.cyan("Network:"), config.network);
-    console.log(chalk.cyan("Contract Address:"), config.contractAddress);
-    console.log(chalk.cyan("RPC URL:"), config.rpcUrl);
+    // Display basic configuration
+    displayBasicConfig(config);
 
-    // Show private key in a masked format for security
-    const maskedKey = config.privateKey
-      ? `${config.privateKey.slice(0, 6)}...${config.privateKey.slice(-4)}`
-      : "Not set";
-    console.log(chalk.cyan("Private Key:"), maskedKey);
-
-    // Ask if user wants to view full private key
-    const { showFullKey } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "showFullKey",
-        message: "Would you like to view the full private key?",
-        default: false,
-      },
-    ]);
-
-    if (showFullKey) {
-      console.log(chalk.cyan("\nFull Private Key:"), config.privateKey);
-      console.log(
-        chalk.yellow("\nWarning: Never share your private key with anyone!")
-      );
-    }
+    // Handle private key display
+    await handlePrivateKeyDisplay(config);
   } catch (error) {
-    if (error.code === "ENOENT") {
-      console.error(
-        chalk.red("No configuration found. Please run 'setup' first.")
-      );
-    } else {
-      console.error(chalk.red("Error reading configuration:"), error);
-    }
+    handleConfigError(error);
+  }
+}
+
+/**
+ * Displays the basic configuration settings
+ * @param {Object} config - The configuration object
+ */
+function displayBasicConfig(config) {
+  console.log(chalk.yellow("\nCurrent Configuration:"));
+  console.log(chalk.cyan("Network:"), config.network);
+  console.log(chalk.cyan("Contract Address:"), config.contractAddress);
+  console.log(chalk.cyan("RPC URL:"), config.rpcUrl);
+
+  const maskedKey = maskPrivateKey(config.privateKey);
+  console.log(chalk.cyan("Private Key:"), maskedKey);
+}
+
+/**
+ * Masks a private key for secure display
+ * @param {string} privateKey - The private key to mask
+ * @returns {string} The masked private key
+ */
+function maskPrivateKey(privateKey) {
+  if (!privateKey) return CONFIG_DISPLAY.DEFAULT_VALUE;
+
+  const { PREFIX, SUFFIX } = CONFIG_DISPLAY.MASKED_KEY_LENGTH;
+  return `${privateKey.slice(0, PREFIX)}...${privateKey.slice(-SUFFIX)}`;
+}
+
+/**
+ * Handles the display of the full private key after user confirmation
+ * @param {Object} config - The configuration object
+ */
+async function handlePrivateKeyDisplay(config) {
+  const showFullKey = await promptForFullKeyDisplay();
+
+  if (showFullKey) {
+    displayFullPrivateKey(config.privateKey);
+  }
+}
+
+/**
+ * Prompts the user about displaying the full private key
+ * @returns {Promise<boolean>} Whether to show the full private key
+ */
+async function promptForFullKeyDisplay() {
+  const { showFullKey } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "showFullKey",
+      message: "Would you like to view the full private key?",
+      default: false,
+    },
+  ]);
+
+  return showFullKey;
+}
+
+/**
+ * Displays the full private key with a security warning
+ * @param {string} privateKey - The full private key
+ */
+function displayFullPrivateKey(privateKey) {
+  console.log(chalk.cyan("\nFull Private Key:"), privateKey);
+  console.log(chalk.yellow(`\n${WARNING_MESSAGES.PRIVATE_KEY}`));
+}
+
+/**
+ * Handles errors that occur during configuration display
+ * @param {Error} error - The error to handle
+ */
+function handleConfigError(error) {
+  if (error.code === "ENOENT") {
+    console.error(chalk.red(ERROR_MESSAGES.NO_CONFIG));
+  } else {
+    console.error(chalk.red(ERROR_MESSAGES.GENERIC), error);
   }
 }
 

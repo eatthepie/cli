@@ -484,3 +484,30 @@ export async function changeDifficulty(
     throw new Error(`Failed to change difficulty: ${error.message}`);
   }
 }
+
+/**
+ * Get consecutive games information from the contract
+ * @param {Object} publicClient - Viem public client instance
+ * @param {string} contractAddress - Contract address
+ * @returns {Promise<Object>} Consecutive games information
+ */
+export async function getConsecutiveGamesInfo(publicClient, contractAddress) {
+  const [consecutiveJackpotGames, consecutiveNonJackpotGames] =
+    await Promise.all([
+      publicClient.readContract({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: "consecutiveJackpotGames",
+      }),
+      publicClient.readContract({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: "consecutiveNonJackpotGames",
+      }),
+    ]);
+
+  return {
+    consecutiveJackpotGames,
+    consecutiveNonJackpotGames,
+  };
+}

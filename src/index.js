@@ -32,13 +32,6 @@ import submitVDFProofCommand from "./commands/submitVDFProof.js";
 import verifyVDFCommand from "./commands/verifyVDF.js";
 import calculatePayoutsCommand from "./commands/calculatePayouts.js";
 
-/**
- * Configure and initialize the CLI application using yargs.
- * Commands are grouped by functionality for better organization:
- * - Game Management: Basic setup and configuration
- * - Player Interaction: User-focused actions
- * - Draw and Verification: Backend lottery operations
- */
 yargs(hideBin(process.argv))
   // Game Management Commands
   .command(setupCommand)
