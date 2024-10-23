@@ -1,7 +1,7 @@
 {
   "name": "eatthepie-cli",
   "version": "1.0.0",
-  "description": "CLI app for playing the EatThePie lottery on Ethereum",
+  "description": "CLI app for interacting with Eat The Pie, the world lottery on Ethereum.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

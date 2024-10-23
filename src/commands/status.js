@@ -118,6 +118,11 @@ function formatDrawTime(drawTime) {
  */
 function handleError(error) {
   console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(
+    chalk.red(
+      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+    )
+  );
   process.exit(1);
 }
 

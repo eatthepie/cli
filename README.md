@@ -1,8 +1,8 @@
 ![Eat The Pie](https://github.com/eatthepie/docs/blob/main/static/img/header.png)
 
-# EatThePie CLI
+# Eat The Pie CLI
 
-A command-line interface for interacting with EatThePie lottery on Ethereum.
+A command-line interface for interacting with Eat The Pie, the world lottery on Ethereum.
 
 ## 🚀 Quick Start
 

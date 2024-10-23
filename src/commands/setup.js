@@ -39,7 +39,7 @@ const VALIDATION = {
  * Welcome messages
  */
 const MESSAGES = {
-  WELCOME: "Welcome to EatThePie! Let's set up your configuration.",
+  WELCOME: "Welcome to Eat The Pie! Let's set up your configuration.",
   SUCCESS: "Configuration saved successfully!",
 };
 
