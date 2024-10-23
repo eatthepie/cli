@@ -67,9 +67,9 @@ async function processDifficultyChange(
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.cyan("Transaction Hash:"), txHash);
-  console.log(chalk.yellow(SUCCESS_MESSAGES.NOTE));
-  console.log(chalk.green(`\n${SUCCESS_MESSAGES.COMPLETE}`));
+  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+  console.log(chalk.cyan(SUCCESS_MESSAGES.NOTE));
+  console.log(chalk.green(`${SUCCESS_MESSAGES.COMPLETE}`));
 }
 
 /**

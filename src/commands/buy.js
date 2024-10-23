@@ -168,9 +168,9 @@ function validateTicketNumbers(input, limits) {
  * Displays purchase summary including all tickets and total cost
  */
 function displayPurchaseSummary(tickets, totalPrice) {
-  console.log(chalk.cyan("Tickets to purchase:"));
+  console.log(chalk.yellow("Tickets to purchase:"));
   tickets.forEach((ticket, index) => {
-    console.log(chalk.yellow(`Ticket ${index + 1}:`), ticket.join(", "));
+    console.log(chalk.cyan(`Ticket ${index + 1}:`), ticket.join(", "));
   });
   console.log(chalk.cyan(`Total cost: ${formatEther(totalPrice)} ETH`));
 }
@@ -201,7 +201,7 @@ async function confirmAndProcessPurchase(
       tickets,
       totalPrice
     );
-    console.log(chalk.yellow("Transaction Hash:"), result);
+    console.log(chalk.yellow("\nTransaction Hash:"), result);
     console.log(chalk.green("Tickets purchased successfully!"));
   } else {
     console.log(chalk.yellow("Purchase cancelled."));

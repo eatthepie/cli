@@ -87,8 +87,8 @@ async function processPayoutCalculation(
       gameNumber
     );
 
-    console.log(chalk.green("\nPayouts calculation submitted!"));
-    console.log(chalk.cyan("Transaction Hash:"), txHash);
+    console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+    console.log(chalk.green("Payouts calculation submitted!"));
 
     // Wait for transaction confirmation
     await waitForTransactionConfirmation(publicClient, txHash);

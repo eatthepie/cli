@@ -82,8 +82,8 @@ async function processNFTMinting(walletClient, contractAddress, gameNumber) {
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.green(`\n${SUCCESS_MESSAGES.NFT_MINTED}`));
-  console.log(chalk.cyan("Transaction Hash:"), txHash);
+  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+  console.log(chalk.green(`${SUCCESS_MESSAGES.NFT_MINTED}`));
 }
 
 /**
