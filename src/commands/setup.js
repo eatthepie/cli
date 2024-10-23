@@ -56,7 +56,7 @@ const setupQuestions = [
     type: "list",
     name: "network",
     message: "Which network would you like to use?",
-    choices: ["mainnet", "sepolia", "anvil"],
+    choices: ["mainnet", "sepolia"],
     default: NETWORK_CONFIG.MAINNET.NAME,
   },
   {

@@ -14,7 +14,7 @@ import { mainnet, sepolia } from "viem/chains";
 /**
  * Create a public client for reading from the blockchain
  * @param {Object} config - Client configuration
- * @param {string} config.network - Network name (mainnet, sepolia, or anvil)
+ * @param {string} config.network - Network name (mainnet, sepolia)
  * @param {string} config.rpcUrl - RPC endpoint URL
  * @returns {PublicClient} Configured public client
  */
@@ -29,7 +29,7 @@ export function createPublicClient(config) {
 /**
  * Create a wallet client for signing transactions
  * @param {Object} config - Client configuration
- * @param {string} config.network - Network name (mainnet, sepolia, or anvil)
+ * @param {string} config.network - Network name (mainnet, sepolia)
  * @param {string} config.rpcUrl - RPC endpoint URL
  * @param {string} config.privateKey - Private key for signing
  * @returns {WalletClient} Configured wallet client
@@ -54,16 +54,6 @@ function getChain(network) {
   const chains = {
     mainnet,
     sepolia,
-    anvil: {
-      id: 31337,
-      name: "Anvil",
-      network: "anvil",
-      nativeCurrency: {
-        name: "Ether",
-        symbol: "ETH",
-        decimals: 18,
-      },
-    },
   };
 
   const chain = chains[network];
