@@ -119,9 +119,21 @@ async function getTicketNumbers(ticketCount, limits) {
   if (choiceMethod === "Provide own") {
     return await getManualTickets(ticketCount, limits);
   }
-  return Array(ticketCount)
-    .fill()
-    .map(() => generateRandomTicket(limits));
+
+  const uniqueTickets = new Set();
+  const tickets = [];
+
+  while (tickets.length < ticketCount) {
+    const newTicket = generateRandomTicket(limits);
+    const ticketKey = newTicket.join(",");
+
+    if (!uniqueTickets.has(ticketKey)) {
+      uniqueTickets.add(ticketKey);
+      tickets.push(newTicket);
+    }
+  }
+
+  return tickets;
 }
 
 /**
