@@ -8,6 +8,27 @@ import { submitVDFProof } from "../services/gameService.js";
 import { decodeErrorResult } from "viem";
 
 /**
+ * Error messages that require special handling
+ */
+const ERROR_MESSAGES = {
+  RANDAO_NOT_SET: "Random value not set for this game",
+  VDF_ALREADY_SUBMITTED: "VDF proof already submitted for this game",
+  INVALID_VDF_PROOF: "Invalid VDF proof",
+};
+
+/**
+ * Error response messages
+ */
+const ERROR_RESPONSES = {
+  RANDAO_NOT_SET:
+    "RANDAO value not set for this game. VDF proof cannot be submitted yet.",
+  VDF_ALREADY_SUBMITTED:
+    "VDF proof already submitted for this game. To verify a previous game, use command 'verify-vdf'.",
+  INVALID_VDF_PROOF:
+    "Invalid VDF proof. Please check the proof file and try again.",
+};
+
+/**
  * Validation messages
  */
 const VALIDATION = {
@@ -189,6 +210,24 @@ function displaySuccessMessages(txHash) {
  * @param {Error} error - The error object
  */
 function handleError(error) {
+  // Map of error messages to their corresponding responses
+  const errorHandlers = {
+    [ERROR_MESSAGES.RANDAO_NOT_SET]: () =>
+      console.log(chalk.yellow(ERROR_RESPONSES.RANDAO_NOT_SET)),
+    [ERROR_MESSAGES.VDF_ALREADY_SUBMITTED]: () =>
+      console.log(chalk.yellow(ERROR_RESPONSES.VDF_ALREADY_SUBMITTED)),
+    [ERROR_MESSAGES.INVALID_VDF_PROOF]: () =>
+      console.log(chalk.yellow(ERROR_RESPONSES.INVALID_VDF_PROOF)),
+  };
+
+  // Check if error matches any known error types
+  for (const [errorMessage, handler] of Object.entries(errorHandlers)) {
+    if (error.message.includes(errorMessage)) {
+      handler();
+      return;
+    }
+  }
+
   console.error(chalk.red("\nError:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
