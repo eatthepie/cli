@@ -206,18 +206,39 @@ async function confirmAndProcessPurchase(
   ]);
 
   if (confirm) {
-    const result = await buyTickets(
+    const txHash = await buyTickets(
       walletClient,
       publicClient,
       contractAddress,
       tickets,
       totalPrice
     );
-    console.log(chalk.yellow("\nTransaction Hash:"), result);
-    console.log(chalk.green("Tickets purchased successfully!"));
+
+    console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+    console.log(chalk.green("Purchase submitted!"));
+
+    // Wait for transaction confirmation
+    await waitForTransactionConfirmation(publicClient, txHash);
   } else {
     console.log(chalk.yellow("Purchase cancelled."));
   }
+}
+
+/**
+ * Waits for a transaction to be confirmed and displays the confirmation
+ * @param {PublicClient} publicClient - The public client instance
+ * @param {string} txHash - The transaction hash to wait for
+ */
+async function waitForTransactionConfirmation(publicClient, txHash) {
+  console.log(chalk.yellow("\nWaiting for transaction to be mined..."));
+
+  const receipt = await publicClient.waitForTransactionReceipt({
+    hash: txHash,
+    confirmations: 1,
+  });
+
+  console.log(chalk.cyan("Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\nTransaction mined successfully!"));
 }
 
 export default {

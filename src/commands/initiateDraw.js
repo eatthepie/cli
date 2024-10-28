@@ -1,4 +1,3 @@
-import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
 import { createPublicClient, createWalletClient } from "../utils/ethereum.js";

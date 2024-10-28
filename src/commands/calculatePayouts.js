@@ -113,8 +113,8 @@ async function waitForTransactionConfirmation(publicClient, txHash) {
     confirmations: 1,
   });
 
-  console.log(chalk.green("\nTransaction mined successfully!"));
   console.log(chalk.cyan("Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\nTransaction mined successfully!"));
 }
 
 /**
