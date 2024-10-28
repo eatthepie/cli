@@ -7,6 +7,9 @@
   "scripts": {
     "start": "node src/index.js"
   },
+  "bin": {
+    "eatthepie": "./src/index.js"
+  },
   "keywords": [
     "ethereum",
     "lottery",

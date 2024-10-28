@@ -9,9 +9,9 @@
  */
 export function getDifficultyLimits(difficulty) {
   const limits = [
-    { max: 50, etherballMax: 5 },
-    { max: 100, etherballMax: 10 },
-    { max: 150, etherballMax: 15 },
+    { max: 25, etherballMax: 10 },
+    { max: 50, etherballMax: 10 },
+    { max: 75, etherballMax: 10 },
   ];
   return limits[difficulty] || limits[0];
 }
