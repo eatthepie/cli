@@ -13,18 +13,18 @@ import { formatDifficulty } from "../utils/display.js";
 const DIFFICULTY_CONFIGS = {
   EASY: {
     LEVEL: 0,
-    MAX_NUMBER: 50,
-    MAX_ETHERBALL: 5,
+    MAX_NUMBER: 25,
+    MAX_ETHERBALL: 10,
   },
   MEDIUM: {
     LEVEL: 1,
-    MAX_NUMBER: 100,
+    MAX_NUMBER: 50,
     MAX_ETHERBALL: 10,
   },
   HARD: {
     LEVEL: 2,
-    MAX_NUMBER: 150,
-    MAX_ETHERBALL: 15,
+    MAX_NUMBER: 75,
+    MAX_ETHERBALL: 10,
   },
 };
 

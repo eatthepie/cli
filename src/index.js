@@ -33,6 +33,7 @@ import verifyVDFCommand from "./commands/verifyVDF.js";
 import calculatePayoutsCommand from "./commands/calculatePayouts.js";
 
 yargs(hideBin(process.argv))
+  .version("1.0.0")
   // Game Management Commands
   .command(setupCommand)
   .command(configCommand)
