@@ -124,10 +124,8 @@ export async function buyTickets(
       value: totalCost,
     });
 
-    // Execute transaction
     const hash = await walletClient.writeContract(request);
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    return receipt.transactionHash;
+    return hash;
   } catch (error) {
     throw new Error(`Failed to buy tickets: ${error.message}`);
   }

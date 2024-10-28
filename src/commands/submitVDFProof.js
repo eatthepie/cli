@@ -5,7 +5,6 @@ import { pad } from "viem";
 import { loadConfig } from "../utils/config.js";
 import { createWalletClient, createPublicClient } from "../utils/ethereum.js";
 import { submitVDFProof } from "../services/gameService.js";
-import { decodeErrorResult } from "viem";
 
 /**
  * Error messages that require special handling
