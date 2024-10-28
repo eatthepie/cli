@@ -46,11 +46,6 @@ const MESSAGES = {
 };
 
 /**
- * Default contract address for testing
- */
-const DEFAULT_CONTRACT = "0x1234567890123456789012345678901234567890";
-
-/**
  * Setup questions configuration
  */
 const setupQuestions = [
