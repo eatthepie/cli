@@ -91,13 +91,17 @@ function displaySuccessMessages(txHash) {
  * @param {Error} error - The error to handle
  */
 function handleMintError(error) {
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
-  console.error(
-    chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
-    )
-  );
-  process.exit(1);
+  if (error.message.includes("Not a gold ticket winner.")) {
+    console.error(chalk.yellow("\nOnly jackpot winners can mint a NFT."));
+  } else {
+    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    console.error(
+      chalk.red(
+        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      )
+    );
+    process.exit(1);
+  }
 }
 
 export default {

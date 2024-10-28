@@ -9,6 +9,8 @@ import { setRandao } from "../services/gameService.js";
  */
 const ERROR_MESSAGES = {
   BUFFER_PERIOD: "Buffer period not yet passed",
+  DRAW_NOT_INITIATED: "Draw not initiated for this game",
+  ALREADY_SET: "Random has already been set",
 };
 
 /**
@@ -16,6 +18,8 @@ const ERROR_MESSAGES = {
  */
 const ERROR_RESPONSES = {
   BUFFER_PERIOD: "Buffer period (128 blocks) not yet passed.",
+  DRAW_NOT_INITIATED: "Draw has not yet been initiated for this game.",
+  ALREADY_SET: "RANDAO has already been set for this game.",
 };
 
 /**
@@ -117,17 +121,31 @@ function displaySuccessMessages(txHash) {
  * @param {Error} error - The error to handle
  */
 function handleSetRandaoError(error) {
-  if (error.message.includes(ERROR_MESSAGES.BUFFER_PERIOD)) {
-    console.log(chalk.yellow(ERROR_RESPONSES.BUFFER_PERIOD));
-  } else {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
-    console.error(
-      chalk.red(
-        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
-      )
-    );
-    process.exit(1);
+  // Map of error messages to their corresponding responses
+  const errorHandlers = {
+    [ERROR_MESSAGES.BUFFER_PERIOD]: () =>
+      console.log(chalk.yellow(ERROR_RESPONSES.BUFFER_PERIOD)),
+    [ERROR_MESSAGES.DRAW_NOT_INITIATED]: () =>
+      console.log(chalk.yellow(ERROR_RESPONSES.DRAW_NOT_INITIATED)),
+    [ERROR_MESSAGES.ALREADY_SET]: () =>
+      console.log(chalk.yellow(ERROR_RESPONSES.ALREADY_SET)),
+  };
+
+  // Check if error matches any known error types
+  for (const [errorMessage, handler] of Object.entries(errorHandlers)) {
+    if (error.message.includes(errorMessage)) {
+      handler();
+      return;
+    }
   }
+
+  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(
+    chalk.red(
+      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+    )
+  );
+  process.exit(1);
 }
 
 export default {

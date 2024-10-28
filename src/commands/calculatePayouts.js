@@ -147,7 +147,7 @@ function handlePayoutError(error) {
   if (error.message.includes(ERROR_MESSAGES.VDF_NOT_VALIDATED)) {
     console.log(
       chalk.yellow(
-        "Game still in progress. You can only calculate payouts once the VDF proof has been submitted."
+        "You can only calculate payouts once the VDF proof of the game has been submitted."
       )
     );
   } else {

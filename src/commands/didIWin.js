@@ -12,6 +12,7 @@ import { createPublicClient } from "../utils/ethereum.js";
  */
 const ERROR_MESSAGES = {
   GAME_NOT_COMPLETE: "Game draw not completed yet",
+  GAME_INVALID: "Invalid game number",
 };
 
 /**
@@ -157,17 +158,21 @@ function displayWinningInfo(winningInfo) {
  * @param {Error} error - The error to handle
  */
 function handleWinCheckError(error) {
-  if (error.message.includes(ERROR_MESSAGES.GAME_NOT_COMPLETE)) {
-    console.log(chalk.yellow("\nGame is not completed yet."));
-  } else {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
-    console.error(
-      chalk.red(
-        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
-      )
-    );
-    process.exit(1);
+  // Check if error message matches any of our known error types
+  for (const [, message] of Object.entries(ERROR_MESSAGES)) {
+    if (error.message.includes(message)) {
+      console.log(chalk.yellow(`\n${message}`));
+      return;
+    }
   }
+
+  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(
+    chalk.red(
+      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+    )
+  );
+  process.exit(1);
 }
 
 export default {
