@@ -230,7 +230,7 @@ async function confirmAndProcessPurchase(
  * @param {string} txHash - The transaction hash to wait for
  */
 async function waitForTransactionConfirmation(publicClient, txHash) {
-  console.log(chalk.yellow("\nWaiting for transaction to be mined..."));
+  console.log(chalk.yellow("\nWaiting for transaction to be confirmed..."));
 
   const receipt = await publicClient.waitForTransactionReceipt({
     hash: txHash,
@@ -238,7 +238,7 @@ async function waitForTransactionConfirmation(publicClient, txHash) {
   });
 
   console.log(chalk.cyan("Block Number:"), receipt.blockNumber);
-  console.log(chalk.green("\nTransaction mined successfully!"));
+  console.log(chalk.green("\nTransaction confirmed successfully!"));
 }
 
 export default {

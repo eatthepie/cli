@@ -19,6 +19,11 @@ export function displayBanner() {
     )
   );
   console.log(chalk.cyan("♦♦♦ THE WORLD LOTTERY ON ETHEREUM ♦♦♦ \n"));
+  console.log(
+    chalk.yellow(
+      "NOTICE: Eat The Pie is a fully decentralized lottery running autonomously on Ethereum - all operations are irreversible and governed by immutable smart contracts. Participate at your own risk.\n"
+    )
+  );
 }
 
 /**
