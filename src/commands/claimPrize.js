@@ -17,7 +17,7 @@ const ERROR_MESSAGES = {
  * Success messages
  */
 const SUCCESS_MESSAGES = {
-  CLAIMED: "Prize claimed successfully!",
+  CLAIMED: "🎉 Prize claimed successfully! 🏆",
 };
 
 /**
@@ -29,6 +29,8 @@ async function claimPrizeHandler() {
     // Initialize wallet client and configuration
     const config = await loadConfig();
     const walletClient = createWalletClient(config);
+
+    console.log(chalk.cyan("\n💫 Initiating prize claim process..."));
 
     // Get game number from user
     const gameNumber = await promptForGameNumber();
@@ -49,8 +51,9 @@ async function promptForGameNumber() {
     {
       type: "number",
       name: "gameNumber",
-      message: "Enter the game number for which you want to claim the prize:",
-      validate: (input) => input > 0 || "Please enter a valid game number",
+      message:
+        "🎮 Enter the game number for which you want to claim the prize:",
+      validate: (input) => input > 0 || "⚠️ Please enter a valid game number",
     },
   ]);
   return gameNumber;
@@ -63,8 +66,30 @@ async function promptForGameNumber() {
  * @param {number} gameNumber - The game number to claim prize for
  */
 async function processPrizeClaim(walletClient, contractAddress, gameNumber) {
+  console.log(chalk.yellow("\n🎰 Processing your prize claim..."));
+
   const txHash = await claimPrize(walletClient, contractAddress, gameNumber);
   displaySuccessMessages(txHash);
+
+  // Wait for confirmation
+  await waitForTransactionConfirmation(walletClient, txHash);
+}
+
+/**
+ * Waits for a transaction to be confirmed and displays the confirmation
+ * @param {WalletClient} walletClient - The wallet client instance
+ * @param {string} txHash - The transaction hash to wait for
+ */
+async function waitForTransactionConfirmation(walletClient, txHash) {
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
+
+  const receipt = await walletClient.waitForTransactionReceipt({
+    hash: txHash,
+    confirmations: 1,
+  });
+
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
 }
 
 /**
@@ -72,8 +97,9 @@ async function processPrizeClaim(walletClient, contractAddress, gameNumber) {
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
-  console.log(chalk.green(`${SUCCESS_MESSAGES.CLAIMED}`));
+  console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
+  console.log(chalk.green(SUCCESS_MESSAGES.CLAIMED));
+  console.log(chalk.cyan("💰 Check your wallet for the claimed prize!"));
 }
 
 /**
@@ -82,9 +108,9 @@ function displaySuccessMessages(txHash) {
  */
 function handleClaimError(error) {
   const errorMessages = {
-    [ERROR_MESSAGES.DRAW_NOT_COMPLETE]: "Game draw not completed yet.",
-    [ERROR_MESSAGES.ALREADY_CLAIMED]: "Prize already claimed for this game.",
-    [ERROR_MESSAGES.NO_PRIZE]: "No prize to claim for this game.",
+    [ERROR_MESSAGES.DRAW_NOT_COMPLETE]: "⏰ Game draw not completed yet.",
+    [ERROR_MESSAGES.ALREADY_CLAIMED]: "📢 Prize already claimed for this game.",
+    [ERROR_MESSAGES.NO_PRIZE]: "💨 No prize to claim for this game.",
   };
 
   // Check if error message matches any of our known error types
@@ -96,10 +122,10 @@ function handleClaimError(error) {
   }
 
   // Handle unknown errors
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -107,6 +133,6 @@ function handleClaimError(error) {
 
 export default {
   command: "claim-prize",
-  describe: "Claim your prize",
+  describe: "🏆 Claim your prize",
   handler: claimPrizeHandler,
 };

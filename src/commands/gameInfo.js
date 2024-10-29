@@ -10,28 +10,28 @@ import { formatEther } from "viem";
  * Game status mapping
  */
 const GAME_STATUS = {
-  0: "InPlay",
-  1: "Drawing",
-  2: "Completed",
+  0: "🎮 In Play",
+  1: "🎲 Drawing",
+  2: "✅ Completed",
 };
 
 /**
  * Prize tier labels
  */
-const PRIZE_TIERS = ["Jackpot", "3 in-a-row", "2 in-a-row"];
+const PRIZE_TIERS = ["🏆 Jackpot", "🥈 3 in-a-row", "🥉 2 in-a-row"];
 
 /**
  * Validation messages
  */
 const VALIDATION = {
-  GAME_NUMBER: "Please enter a valid game number",
+  GAME_NUMBER: "⚠️ Please enter a valid game number",
 };
 
 /**
  * Display defaults
  */
 const DISPLAY = {
-  NOT_AVAILABLE: "-",
+  NOT_AVAILABLE: "❓",
 };
 
 /**
@@ -45,7 +45,8 @@ const ERROR_MESSAGES = {
  * Error response messages
  */
 const ERROR_RESPONSES = {
-  GAME_NOT_STARTED: "Game number you entered exceeds the current active game.",
+  GAME_NOT_STARTED:
+    "⚠️ Game number you entered exceeds the current active game.",
 };
 
 /**
@@ -53,6 +54,8 @@ const ERROR_RESPONSES = {
  */
 async function gameInfoHandler() {
   try {
+    console.log(chalk.cyan("\n🔍 Loading game information..."));
+
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
 
@@ -80,7 +83,7 @@ async function promptForGameNumber() {
     {
       type: "number",
       name: "gameNumber",
-      message: "Enter the past game number you want to view:",
+      message: "🎮 Enter the past game number you want to view:",
       validate: (input) => input > 0 || VALIDATION.GAME_NUMBER,
     },
   ]);
@@ -96,7 +99,7 @@ function displayGameInformation(gameNumber, gameInfo) {
   const status = GAME_STATUS[Number(gameInfo.status)];
   const isVdfSubmitted = gameInfo.winningNumbers[0] !== 0n;
 
-  console.log(chalk.yellow(`\nGame ${gameNumber} Information:`));
+  console.log(chalk.yellow(`\n🎲 Game ${gameNumber} Information:`));
 
   // Display basic game info
   displayBasicInfo(gameInfo, status);
@@ -114,13 +117,16 @@ function displayGameInformation(gameNumber, gameInfo) {
  * @param {string} status - The game status
  */
 function displayBasicInfo(gameInfo, status) {
-  console.log(chalk.cyan("Status:"), status);
+  console.log(chalk.cyan("📊 Status:"), status);
   console.log(
-    chalk.cyan("Prize Pool:"),
+    chalk.cyan("💰 Prize Pool:"),
     formatEther(gameInfo.prizePool),
     "ETH"
   );
-  console.log(chalk.cyan("Difficulty:"), formatDifficulty(gameInfo.difficulty));
+  console.log(
+    chalk.cyan("🎯 Difficulty:"),
+    formatDifficulty(gameInfo.difficulty)
+  );
 }
 
 /**
@@ -129,18 +135,18 @@ function displayBasicInfo(gameInfo, status) {
  * @param {string} status - The game status
  */
 function displayBlockInfo(gameInfo, status) {
-  const isInPlay = status === "InPlay";
+  const isInPlay = status === "🎮 In Play";
 
   console.log(
-    chalk.cyan("Draw Initiated Block:"),
+    chalk.cyan("📡 Draw Initiated Block:"),
     isInPlay ? DISPLAY.NOT_AVAILABLE : gameInfo.drawInitiatedBlock.toString()
   );
   console.log(
-    chalk.cyan("RANDAO Block:"),
+    chalk.cyan("🔄 RANDAO Block:"),
     isInPlay ? DISPLAY.NOT_AVAILABLE : gameInfo.randaoBlock.toString()
   );
   console.log(
-    chalk.cyan("RANDAO Value:"),
+    chalk.cyan("🎲 RANDAO Value:"),
     isInPlay || !gameInfo.randaoValue
       ? DISPLAY.NOT_AVAILABLE
       : gameInfo.randaoValue.toString()
@@ -155,17 +161,15 @@ function displayBlockInfo(gameInfo, status) {
  */
 function displayWinningInfo(gameInfo, status, isVdfSubmitted) {
   console.log(
-    chalk.cyan("Winning Numbers:"),
+    chalk.cyan("🎯 Winning Numbers:"),
     isVdfSubmitted ? gameInfo.winningNumbers.join(", ") : DISPLAY.NOT_AVAILABLE
   );
   console.log(
-    chalk.cyan("Number of Winners:"),
+    chalk.cyan("👥 Number of Winners:"),
     isVdfSubmitted
-      ? `${gameInfo.numberOfWinners.toString()} (Jackpot: ${
+      ? `${gameInfo.numberOfWinners.toString()} (🏆: ${
           gameInfo.goldWinners
-        }, 3 in-a-row: ${gameInfo.silverWinners}, 2 in-a-row: ${
-          gameInfo.bronzeWinners
-        })`
+        }, 🥈: ${gameInfo.silverWinners}, 🥉: ${gameInfo.bronzeWinners})`
       : DISPLAY.NOT_AVAILABLE
   );
 
@@ -179,8 +183,8 @@ function displayWinningInfo(gameInfo, status, isVdfSubmitted) {
  */
 function displayPayouts(gameInfo, status) {
   console.log(
-    chalk.cyan("Payouts:"),
-    status === "Completed"
+    chalk.cyan("💸 Payouts:"),
+    status === "✅ Completed"
       ? formatPayouts(gameInfo.payouts)
       : DISPLAY.NOT_AVAILABLE
   );
@@ -207,10 +211,13 @@ function handleError(error) {
   if (error.message.includes(ERROR_MESSAGES.GAME_NOT_STARTED)) {
     console.log(chalk.yellow(ERROR_RESPONSES.GAME_NOT_STARTED));
   } else {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    console.error(
+      chalk.red("\n❌ Error:"),
+      error.shortMessage || error.message
+    );
     console.error(
       chalk.red(
-        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+        "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
       )
     );
     process.exit(1);
@@ -219,6 +226,6 @@ function handleError(error) {
 
 export default {
   command: "game-info",
-  describe: "Get game information",
+  describe: "🎲 Get game information",
   handler: gameInfoHandler,
 };

@@ -17,23 +17,23 @@ const ERROR_MESSAGES = {
  * Error response messages
  */
 const ERROR_RESPONSES = {
-  BUFFER_PERIOD: "Buffer period (128 blocks) not yet passed.",
-  DRAW_NOT_INITIATED: "Draw has not yet been initiated for this game.",
-  ALREADY_SET: "RANDAO has already been set for this game.",
+  BUFFER_PERIOD: "⏳ Buffer period (128 blocks) not yet passed.",
+  DRAW_NOT_INITIATED: "🎲 Draw has not yet been initiated for this game.",
+  ALREADY_SET: "✅ RANDAO has already been set for this game.",
 };
 
 /**
  * Success messages
  */
 const SUCCESS_MESSAGES = {
-  RANDAO_SET: "RANDAO value set successfully!",
+  RANDAO_SET: "🎲 RANDAO value set successfully! ✨",
 };
 
 /**
  * Validation messages
  */
 const VALIDATION = {
-  GAME_NUMBER: "Please enter a valid game number",
+  GAME_NUMBER: "⚠️ Please enter a valid game number",
 };
 
 /**
@@ -48,6 +48,8 @@ const PROMPT_MESSAGES = {
  */
 async function setRandaoHandler() {
   try {
+    console.log(chalk.cyan("\n🎲 Starting RANDAO setup process..."));
+
     // Initialize clients and configuration
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
@@ -77,7 +79,7 @@ async function promptForGameNumber() {
     {
       type: "number",
       name: "gameNumber",
-      message: PROMPT_MESSAGES.GAME_NUMBER,
+      message: "🎮 " + PROMPT_MESSAGES.GAME_NUMBER,
       validate: (input) => input > 0 || VALIDATION.GAME_NUMBER,
     },
   ]);
@@ -97,6 +99,8 @@ async function processSetRandao(
   contractAddress,
   gameNumber
 ) {
+  console.log(chalk.yellow("\n🎯 Setting RANDAO value..."));
+
   const txHash = await setRandao(
     walletClient,
     publicClient,
@@ -105,6 +109,27 @@ async function processSetRandao(
   );
 
   displaySuccessMessages(txHash);
+
+  // Wait for transaction confirmation
+  await waitForTransactionConfirmation(publicClient, txHash);
+}
+
+/**
+ * Waits for a transaction to be confirmed and displays the confirmation
+ * @param {PublicClient} publicClient - The public client instance
+ * @param {string} txHash - The transaction hash to wait for
+ */
+async function waitForTransactionConfirmation(publicClient, txHash) {
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
+
+  const receipt = await publicClient.waitForTransactionReceipt({
+    hash: txHash,
+    confirmations: 1,
+  });
+
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
+  console.log(chalk.cyan("🎲 RANDAO value has been set!"));
 }
 
 /**
@@ -112,8 +137,8 @@ async function processSetRandao(
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
-  console.log(chalk.green(`${SUCCESS_MESSAGES.RANDAO_SET}`));
+  console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
+  console.log(chalk.green(SUCCESS_MESSAGES.RANDAO_SET));
 }
 
 /**
@@ -139,10 +164,10 @@ function handleSetRandaoError(error) {
     }
   }
 
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -150,6 +175,6 @@ function handleSetRandaoError(error) {
 
 export default {
   command: "set-randao",
-  describe: "Set the RANDAO value",
+  describe: "🎲 Set the RANDAO value",
   handler: setRandaoHandler,
 };

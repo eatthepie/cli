@@ -20,19 +20,19 @@ const ERROR_MESSAGES = {
  */
 const ERROR_RESPONSES = {
   RANDAO_NOT_SET:
-    "RANDAO value not set for this game. VDF proof cannot be submitted yet.",
+    "🎲 RANDAO value not set for this game. VDF proof cannot be submitted yet.",
   VDF_ALREADY_SUBMITTED:
-    "VDF proof already submitted for this game. To verify a previous game, use command 'verify-vdf'.",
+    "✅ VDF proof already submitted for this game. To verify a previous game, use command 'verify-vdf'.",
   INVALID_VDF_PROOF:
-    "Invalid VDF proof. Please check the proof file and try again.",
+    "❌ Invalid VDF proof. Please check the proof file and try again.",
 };
 
 /**
  * Validation messages
  */
 const VALIDATION = {
-  GAME_NUMBER: "Please enter a valid game number",
-  FILE_PATH: "Please enter a valid file path",
+  GAME_NUMBER: "⚠️ Please enter a valid game number",
+  FILE_PATH: "⚠️ Please enter a valid file path",
 };
 
 /**
@@ -47,8 +47,8 @@ const PROMPT_MESSAGES = {
  * Status messages
  */
 const STATUS_MESSAGES = {
-  SUBMITTING: "Submitting VDF proof...",
-  SUCCESS: "VDF proof submitted successfully!",
+  SUBMITTING: "🔄 Submitting VDF proof...",
+  SUCCESS: "✨ VDF proof submitted successfully! 🎯",
 };
 
 /**
@@ -102,6 +102,8 @@ function prepareProofData(proofData) {
  */
 async function submitVDFProofHandler() {
   try {
+    console.log(chalk.cyan("\n📝 Starting VDF proof submission process..."));
+
     // Initialize clients
     const config = await loadConfig();
     const walletClient = createWalletClient(config);
@@ -129,6 +131,7 @@ async function submitVDFProofHandler() {
  */
 async function getUserInput() {
   const { gameNumber, proofFilePath } = await promptForInput();
+  console.log(chalk.cyan("📂 Reading proof file..."));
   const proofData = readProofFile(proofFilePath);
   return { gameNumber, proofData };
 }
@@ -142,13 +145,13 @@ async function promptForInput() {
     {
       type: "number",
       name: "gameNumber",
-      message: PROMPT_MESSAGES.GAME_NUMBER,
+      message: "🎮 " + PROMPT_MESSAGES.GAME_NUMBER,
       validate: (input) => input > 0 || VALIDATION.GAME_NUMBER,
     },
     {
       type: "input",
       name: "proofFilePath",
-      message: PROMPT_MESSAGES.PROOF_FILE,
+      message: "📄 " + PROMPT_MESSAGES.PROOF_FILE,
       validate: (input) => fs.existsSync(input) || VALIDATION.FILE_PATH,
     },
   ]);
@@ -193,6 +196,25 @@ async function processProofSubmission(
   );
 
   displaySuccessMessages(txHash);
+
+  // Wait for transaction confirmation
+  await waitForTransactionConfirmation(publicClient, txHash);
+}
+
+/**
+ * Waits for a transaction to be confirmed and displays the confirmation
+ */
+async function waitForTransactionConfirmation(publicClient, txHash) {
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
+
+  const receipt = await publicClient.waitForTransactionReceipt({
+    hash: txHash,
+    confirmations: 1,
+  });
+
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
+  console.log(chalk.cyan("🎯 VDF proof is now active!"));
 }
 
 /**
@@ -200,8 +222,8 @@ async function processProofSubmission(
  * @param {string} txHash - Transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
-  console.log(chalk.green(`${STATUS_MESSAGES.SUCCESS}`));
+  console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
+  console.log(chalk.green(STATUS_MESSAGES.SUCCESS));
 }
 
 /**
@@ -227,10 +249,10 @@ function handleError(error) {
     }
   }
 
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -238,6 +260,6 @@ function handleError(error) {
 
 export default {
   command: "submit-vdf-proof",
-  describe: "Submit a VDF proof",
+  describe: "🎯 Submit a VDF proof",
   handler: submitVDFProofHandler,
 };

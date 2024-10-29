@@ -11,8 +11,8 @@ import { createPublicClient } from "../utils/ethereum.js";
  * Error messages that require special handling
  */
 const ERROR_MESSAGES = {
-  GAME_NOT_COMPLETE: "Game draw not completed yet",
-  GAME_INVALID: "Invalid game number",
+  GAME_NOT_COMPLETE: "⏳ Game draw not completed yet",
+  GAME_INVALID: "❌ Invalid game number",
 };
 
 /**
@@ -21,10 +21,10 @@ const ERROR_MESSAGES = {
 const VALIDATION = {
   ETHEREUM_ADDRESS: {
     PATTERN: /^0x[a-fA-F0-9]{40}$/,
-    MESSAGE: "Please enter a valid Ethereum address",
+    MESSAGE: "⚠️ Please enter a valid Ethereum address",
   },
   GAME_NUMBER: {
-    MESSAGE: "Please enter a valid game number",
+    MESSAGE: "⚠️ Please enter a valid game number",
   },
 };
 
@@ -32,9 +32,9 @@ const VALIDATION = {
  * Messages for different win scenarios
  */
 const WIN_MESSAGES = {
-  CONGRATULATIONS: "Congratulations, you won!",
-  NO_WIN: "Sorry, you didn't win in this game. Better luck next time!",
-  CLAIM_REMINDER: "Don't forget to claim your prize!",
+  CONGRATULATIONS: "🎉 Congratulations, you won! 🎊",
+  NO_WIN: "😔 Sorry, you didn't win in this game. Better luck next time! 🍀",
+  CLAIM_REMINDER: "💫 Don't forget to claim your prize! 💰",
 };
 
 /**
@@ -42,6 +42,8 @@ const WIN_MESSAGES = {
  */
 async function didIWinHandler() {
   try {
+    console.log(chalk.cyan("\n🔍 Checking your game results..."));
+
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
 
@@ -70,13 +72,13 @@ async function promptForGameInfo(config) {
     {
       type: "number",
       name: "gameNumber",
-      message: "Enter the game number you want to check:",
+      message: "🎮 Enter the game number you want to check:",
       validate: (input) => input > 0 || VALIDATION.GAME_NUMBER.MESSAGE,
     },
     {
       type: "input",
       name: "walletAddress",
-      message: "Enter wallet address:",
+      message: "👛 Enter wallet address:",
       default: async () => getDefaultWalletAddress(config),
       validate: (input) =>
         VALIDATION.ETHEREUM_ADDRESS.PATTERN.test(input) ||
@@ -138,15 +140,27 @@ function hasWon(winningInfo) {
  */
 function displayWinningInfo(winningInfo) {
   console.log(chalk.green(`\n${WIN_MESSAGES.CONGRATULATIONS}`));
-  console.log(chalk.cyan("Jackpot:"), winningInfo.goldWin ? "Yes" : "No");
-  console.log(chalk.cyan("3 in-a-row:"), winningInfo.silverWin ? "Yes" : "No");
-  console.log(chalk.cyan("2 in-a-row:"), winningInfo.bronzeWin ? "Yes" : "No");
   console.log(
-    chalk.cyan("Total Prize:"),
+    chalk.cyan("🏆 Jackpot:"),
+    winningInfo.goldWin ? "✨ Yes" : "❌ No"
+  );
+  console.log(
+    chalk.cyan("🥈 3 in-a-row:"),
+    winningInfo.silverWin ? "✨ Yes" : "❌ No"
+  );
+  console.log(
+    chalk.cyan("🥉 2 in-a-row:"),
+    winningInfo.bronzeWin ? "✨ Yes" : "❌ No"
+  );
+  console.log(
+    chalk.cyan("💰 Total Prize:"),
     formatEther(winningInfo.totalPrize),
     "ETH"
   );
-  console.log(chalk.cyan("Claimed:"), winningInfo.claimed ? "Yes" : "No");
+  console.log(
+    chalk.cyan("✅ Claimed:"),
+    winningInfo.claimed ? "Yes 🎊" : "No ⏳"
+  );
 
   if (!winningInfo.claimed) {
     console.log(chalk.green(`\n${WIN_MESSAGES.CLAIM_REMINDER}`));
@@ -166,10 +180,10 @@ function handleWinCheckError(error) {
     }
   }
 
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -177,6 +191,6 @@ function handleWinCheckError(error) {
 
 export default {
   command: "did-i-win",
-  describe: "Check if you won",
+  describe: "🎲 Check if you won",
   handler: didIWinHandler,
 };

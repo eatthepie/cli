@@ -11,11 +11,11 @@ import { createPublicClient } from "../utils/ethereum.js";
  */
 const VALIDATION = {
   GAME_NUMBER: {
-    MESSAGE: "Please enter a valid game number",
+    MESSAGE: "⚠️ Please enter a valid game number",
   },
   ETHEREUM_ADDRESS: {
     PATTERN: /^0x[a-fA-F0-9]{40}$/,
-    MESSAGE: "Please enter a valid Ethereum address",
+    MESSAGE: "⚠️ Please enter a valid Ethereum address",
   },
 };
 
@@ -23,9 +23,9 @@ const VALIDATION = {
  * Display messages
  */
 const MESSAGES = {
-  NO_TICKETS: "No tickets found.",
-  TICKETS_HEADER: "Tickets:",
-  TOTAL_TICKETS: "Total Tickets:",
+  NO_TICKETS: "🔍 No tickets found.",
+  TICKETS_HEADER: "🎟️ Tickets:",
+  TOTAL_TICKETS: "📊 Total Tickets:",
 };
 
 /**
@@ -41,6 +41,8 @@ const PROMPT_MESSAGES = {
  */
 async function ticketHistoryHandler() {
   try {
+    console.log(chalk.cyan("\n🔍 Fetching ticket history..."));
+
     // Initialize client and configuration
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
@@ -70,13 +72,13 @@ async function promptForInput(config) {
     {
       type: "number",
       name: "gameNumber",
-      message: PROMPT_MESSAGES.GAME_NUMBER,
+      message: "🎮 " + PROMPT_MESSAGES.GAME_NUMBER,
       validate: (input) => input > 0 || VALIDATION.GAME_NUMBER.MESSAGE,
     },
     {
       type: "input",
       name: "walletAddress",
-      message: PROMPT_MESSAGES.WALLET_ADDRESS,
+      message: "👛 " + PROMPT_MESSAGES.WALLET_ADDRESS,
       default: async () => getDefaultWalletAddress(config),
       validate: (input) =>
         VALIDATION.ETHEREUM_ADDRESS.PATTERN.test(input) ||
@@ -109,6 +111,8 @@ async function fetchAndDisplayHistory(
   gameNumber,
   walletAddress
 ) {
+  console.log(chalk.cyan("📥 Loading ticket data..."));
+
   const events = await getTicketHistory(
     publicClient,
     contractAddress,
@@ -154,7 +158,7 @@ function displayTicket(event, index) {
   const etherball = Number(event.args.etherball);
 
   console.log(
-    chalk.cyan(`Ticket ${index + 1}:`),
+    chalk.cyan(`🎫 Ticket ${index + 1}:`),
     `${numbers[0]}, ${numbers[1]}, ${numbers[2]}, ${etherball}`
   );
 }
@@ -164,7 +168,7 @@ function displayTicket(event, index) {
  * @param {number} count - Total number of tickets
  */
 function displayTicketCount(count) {
-  console.log(chalk.yellow(`\n${MESSAGES.TOTAL_TICKETS}`), count);
+  console.log(chalk.yellow(`\n${MESSAGES.TOTAL_TICKETS}`), count, "🎯");
 }
 
 /**
@@ -172,10 +176,10 @@ function displayTicketCount(count) {
  * @param {Error} error - Error object
  */
 function handleError(error) {
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -183,6 +187,6 @@ function handleError(error) {
 
 export default {
   command: "ticket-history",
-  describe: "Get ticket history",
+  describe: "🎫 Get ticket history",
   handler: ticketHistoryHandler,
 };
