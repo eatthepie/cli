@@ -4,15 +4,33 @@
 
 A command-line interface for interacting with Eat The Pie, the world lottery on Ethereum.
 
+## ⚠️ Disclaimer
+
+Eat The Pie is an autonomous, decentralized lottery on Ethereum. An Ethereum private key with sufficient funds is required to purchase tickets. Participate at your own risk. For complete information about the protocol, please visit [docs.eatthepie.xyz](https://docs.eatthepie.xyz).
+
 ## 🚀 Quick Start
 
+### Prerequisites
+
+- Node.js and npm installed
+- An Ethereum private key with ETH for transactions
+
+### Installation
+
 ```bash
-# Install globally
+# Install once globally
 npm install -g eatthepie
 
-# Or run directly with npx
-npx eatthepie
+# Then use anywhere with:
+eatthepie [command]
 ```
+
+## 📝 Deployed Contracts
+
+| Network | Address                                      |
+| ------- | -------------------------------------------- |
+| Mainnet | `0x043c9ae2764B5a7c2d685bc0262F8cF2f6D86008` |
+| Sepolia | `0x44B340051a31D216f83428B447DBa2C102DFF373` |
 
 ## Commands
 
