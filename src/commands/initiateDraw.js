@@ -16,17 +16,17 @@ const ERROR_MESSAGES = {
  * Success messages
  */
 const SUCCESS_MESSAGES = {
-  DRAW_INITIATED: "Draw initiated successfully!",
+  DRAW_INITIATED: "🎉 Draw initiated successfully! 🎲",
 };
 
 /**
  * Error response messages
  */
 const ERROR_RESPONSES = {
-  ALREADY_INITIATED: "Draw already initiated.",
-  TIME_INTERVAL: "Cannot initiate draw, time interval not yet reached.",
+  ALREADY_INITIATED: "🔄 Draw already initiated.",
+  TIME_INTERVAL: "⏳ Cannot initiate draw, time interval not yet reached.",
   INSUFFICIENT_POOL:
-    "Cannot initiate draw, prize pool threshold not yet reached.",
+    "💰 Cannot initiate draw, prize pool threshold not yet reached.",
 };
 
 /**
@@ -35,6 +35,8 @@ const ERROR_RESPONSES = {
  */
 async function initiateDrawHandler() {
   try {
+    console.log(chalk.cyan("\n🎲 Initiating game draw process..."));
+
     // Initialize clients and configuration
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
@@ -62,6 +64,8 @@ async function processDrawInitiation(
   publicClient,
   contractAddress
 ) {
+  console.log(chalk.yellow("\n🎯 Processing draw initiation..."));
+
   const txHash = await initiateDraw(
     walletClient,
     publicClient,
@@ -69,6 +73,26 @@ async function processDrawInitiation(
   );
 
   displaySuccessMessages(txHash);
+
+  // Wait for transaction confirmation
+  await waitForTransactionConfirmation(publicClient, txHash);
+}
+
+/**
+ * Waits for a transaction to be confirmed and displays the confirmation
+ * @param {PublicClient} publicClient - The public client instance
+ * @param {string} txHash - The transaction hash to wait for
+ */
+async function waitForTransactionConfirmation(publicClient, txHash) {
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
+
+  const receipt = await publicClient.waitForTransactionReceipt({
+    hash: txHash,
+    confirmations: 1,
+  });
+
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
 }
 
 /**
@@ -76,8 +100,9 @@ async function processDrawInitiation(
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
-  console.log(chalk.green(`${SUCCESS_MESSAGES.DRAW_INITIATED}`));
+  console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
+  console.log(chalk.green(SUCCESS_MESSAGES.DRAW_INITIATED));
+  console.log(chalk.cyan("🎮 The game draw has been initiated!"));
 }
 
 /**
@@ -104,10 +129,10 @@ function handleDrawError(error) {
   }
 
   // Handle unknown errors
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -115,6 +140,6 @@ function handleDrawError(error) {
 
 export default {
   command: "initiate-draw",
-  describe: "Initiate the draw",
+  describe: "🎲 Initiate the draw",
   handler: initiateDrawHandler,
 };

@@ -16,8 +16,8 @@ const ERROR_MESSAGES = {
  * Success messages
  */
 const SUCCESS_MESSAGES = {
-  NOTE: "Note: If the conditions for a difficulty change are met, the change will take effect in the next game.",
-  COMPLETE: "Difficulty change initiated successfully!",
+  NOTE: "🎯 Note: If the conditions for a difficulty change are met, the change will take effect in the next game.",
+  COMPLETE: "✨ Difficulty change initiated successfully!",
 };
 
 /**
@@ -30,6 +30,8 @@ async function changeDifficultyHandler() {
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
     const walletClient = createWalletClient(config);
+
+    console.log(chalk.cyan("\n🎮 Initiating difficulty change..."));
 
     // Attempt to change difficulty and process result
     await processDifficultyChange(
@@ -60,6 +62,26 @@ async function processDifficultyChange(
   );
 
   displaySuccessMessages(txHash);
+
+  // Wait for confirmation
+  await waitForTransactionConfirmation(publicClient, txHash);
+}
+
+/**
+ * Waits for a transaction to be confirmed and displays the confirmation
+ * @param {PublicClient} publicClient - The public client instance
+ * @param {string} txHash - The transaction hash to wait for
+ */
+async function waitForTransactionConfirmation(publicClient, txHash) {
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
+
+  const receipt = await publicClient.waitForTransactionReceipt({
+    hash: txHash,
+    confirmations: 1,
+  });
+
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
 }
 
 /**
@@ -67,9 +89,9 @@ async function processDifficultyChange(
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
+  console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
   console.log(chalk.cyan(SUCCESS_MESSAGES.NOTE));
-  console.log(chalk.green(`${SUCCESS_MESSAGES.COMPLETE}`));
+  console.log(chalk.green(SUCCESS_MESSAGES.COMPLETE));
 }
 
 /**
@@ -84,14 +106,17 @@ function handleDifficultyError(error) {
   if (isConditionError) {
     console.log(
       chalk.yellow(
-        "Cannot change difficulty yet. Not enough games played or too soon since last change."
+        "⏰ Cannot change difficulty yet. Not enough games played or too soon since last change."
       )
     );
   } else {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    console.error(
+      chalk.red("\n❌ Error:"),
+      error.shortMessage || error.message
+    );
     console.error(
       chalk.red(
-        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+        "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
       )
     );
     process.exit(1);
@@ -100,6 +125,6 @@ function handleDifficultyError(error) {
 
 export default {
   command: "change-difficulty",
-  describe: "Change the difficulty of the game",
+  describe: "🎯 Change the difficulty of the game",
   handler: changeDifficultyHandler,
 };

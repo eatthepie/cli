@@ -9,11 +9,11 @@ import { formatEther } from "viem";
  * Status field labels
  */
 const STATUS_LABELS = {
-  GAME_ROUND: "Current Game Round",
-  DIFFICULTY: "Difficulty",
-  PRIZE_POOL: "Prize Pool",
-  NEXT_DRAW: "Next Possible Draw Time",
-  TIME_UNTIL_DRAW: "Time Until Draw",
+  GAME_ROUND: "🎮 Current Game Round",
+  DIFFICULTY: "🎯 Difficulty",
+  PRIZE_POOL: "💰 Prize Pool",
+  NEXT_DRAW: "📅 Next Possible Draw Time",
+  TIME_UNTIL_DRAW: "⏳ Time Until Draw",
 };
 
 /**
@@ -35,6 +35,8 @@ const TIME = {
  */
 async function infoHandler() {
   try {
+    console.log(chalk.cyan("\n🔍 Fetching current game status..."));
+
     // Initialize client and get game info
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
@@ -55,7 +57,7 @@ async function infoHandler() {
  * @param {Object} gameInfo - The current game information
  */
 function displayGameStatus(gameInfo) {
-  console.log(chalk.yellow("Status:"));
+  console.log(chalk.yellow("\n📊 Status:"));
   displayStatusFields(gameInfo);
 }
 
@@ -75,7 +77,7 @@ function displayStatusFields(gameInfo) {
     },
     {
       label: STATUS_LABELS.PRIZE_POOL,
-      value: `${formatEther(gameInfo.prizePool)} ${CURRENCY.ETH}`,
+      value: `${formatEther(gameInfo.prizePool)} ${CURRENCY.ETH} ✨`,
     },
     {
       label: STATUS_LABELS.NEXT_DRAW,
@@ -117,10 +119,10 @@ function formatDrawTime(drawTime) {
  * @param {Error} error - The error to handle
  */
 function handleError(error) {
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -128,6 +130,6 @@ function handleError(error) {
 
 export default {
   command: "status",
-  describe: "Get the status of the current game",
+  describe: "📊 Get the status of the current game",
   handler: infoHandler,
 };

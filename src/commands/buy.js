@@ -57,10 +57,13 @@ async function buyHandler() {
       config.contractAddress
     );
   } catch (error) {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    console.error(
+      chalk.red("\n❌ Error:"),
+      error.shortMessage || error.message
+    );
     console.error(
       chalk.red(
-        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+        "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
       )
     );
     process.exit(1);
@@ -72,14 +75,14 @@ async function buyHandler() {
  */
 function displayGameInfo(ticketPrice, difficulty, limits) {
   console.log(
-    chalk.cyan(`Current ticket price: ${formatEther(ticketPrice)} ETH`)
+    chalk.cyan(`💰 Current ticket price: ${formatEther(ticketPrice)} ETH`)
   );
   console.log(
-    chalk.cyan(`Current difficulty: ${formatDifficulty(difficulty)}`)
+    chalk.cyan(`🎯 Current difficulty: ${formatDifficulty(difficulty)}`)
   );
   console.log(
     chalk.cyan(
-      `Valid number range: 1-${limits.max}, Etherball: 1-${limits.etherballMax}`
+      `🔢 Valid number range: 1-${limits.max}, 🌟 Etherball: 1-${limits.etherballMax}`
     )
   );
 }
@@ -93,7 +96,7 @@ async function getTicketCount() {
     {
       type: "number",
       name: "ticketCount",
-      message: "How many tickets do you want to buy? (1-100)",
+      message: "🎟️ How many tickets do you want to buy? (1-100)",
       validate: (input) => input >= 1 && input <= 100,
     },
   ]);
@@ -111,12 +114,12 @@ async function getTicketNumbers(ticketCount, limits) {
     {
       type: "list",
       name: "choiceMethod",
-      message: "Do you want to provide your own numbers or auto-generate?",
-      choices: ["Provide own", "Auto-generate"],
+      message: "✨ Do you want to provide your own numbers or auto-generate?",
+      choices: ["🎯 Provide own", "🎲 Auto-generate"],
     },
   ]);
 
-  if (choiceMethod === "Provide own") {
+  if (choiceMethod === "🎯 Provide own") {
     return await getManualTickets(ticketCount, limits);
   }
 
@@ -149,7 +152,7 @@ async function getManualTickets(ticketCount, limits) {
       {
         type: "input",
         name: "numbers",
-        message: `Enter 4 numbers for ticket ${
+        message: `🎯 Enter 4 numbers for ticket ${
           i + 1
         } (comma-separated, last is Etherball):`,
         validate: (input) => validateTicketNumbers(input, limits),
@@ -180,11 +183,11 @@ function validateTicketNumbers(input, limits) {
  * Displays purchase summary including all tickets and total cost
  */
 function displayPurchaseSummary(tickets, totalPrice) {
-  console.log(chalk.yellow("Tickets to purchase:"));
+  console.log(chalk.yellow("🎫 Tickets to purchase:"));
   tickets.forEach((ticket, index) => {
-    console.log(chalk.cyan(`Ticket ${index + 1}:`), ticket.join(", "));
+    console.log(chalk.cyan(`🎟️ Ticket ${index + 1}:`), ticket.join(", "));
   });
-  console.log(chalk.cyan(`Total cost: ${formatEther(totalPrice)} ETH`));
+  console.log(chalk.cyan(`💰 Total cost: ${formatEther(totalPrice)} ETH`));
 }
 
 /**
@@ -201,7 +204,7 @@ async function confirmAndProcessPurchase(
     {
       type: "confirm",
       name: "confirm",
-      message: "Do you want to proceed with the purchase?",
+      message: "💫 Do you want to proceed with the purchase?",
     },
   ]);
 
@@ -214,13 +217,13 @@ async function confirmAndProcessPurchase(
       totalPrice
     );
 
-    console.log(chalk.yellow("\nTransaction Hash:"), txHash);
-    console.log(chalk.green("Purchase submitted!"));
+    console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
+    console.log(chalk.green("🚀 Purchase submitted!"));
 
     // Wait for transaction confirmation
     await waitForTransactionConfirmation(publicClient, txHash);
   } else {
-    console.log(chalk.yellow("Purchase cancelled."));
+    console.log(chalk.yellow("❌ Purchase cancelled."));
   }
 }
 
@@ -230,19 +233,19 @@ async function confirmAndProcessPurchase(
  * @param {string} txHash - The transaction hash to wait for
  */
 async function waitForTransactionConfirmation(publicClient, txHash) {
-  console.log(chalk.yellow("\nWaiting for transaction to be confirmed..."));
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
 
   const receipt = await publicClient.waitForTransactionReceipt({
     hash: txHash,
     confirmations: 1,
   });
 
-  console.log(chalk.cyan("Block Number:"), receipt.blockNumber);
-  console.log(chalk.green("\nTransaction confirmed successfully!"));
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
 }
 
 export default {
   command: "buy",
-  describe: "Buy tickets",
+  describe: "🎟️ Buy tickets",
   handler: buyHandler,
 };

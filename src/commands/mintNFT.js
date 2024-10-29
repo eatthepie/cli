@@ -8,14 +8,14 @@ import { mintWinningNFT } from "../services/gameService.js";
  * Validation messages
  */
 const VALIDATION = {
-  GAME_NUMBER: "Please enter a valid game number",
+  GAME_NUMBER: "⚠️ Please enter a valid game number",
 };
 
 /**
  * Success messages
  */
 const SUCCESS_MESSAGES = {
-  NFT_MINTED: "Winning NFT minted successfully!",
+  NFT_MINTED: "✨ Winning NFT minted successfully! 🎨",
 };
 
 /**
@@ -31,6 +31,8 @@ const PROMPT_MESSAGES = {
  */
 async function mintNFTHandler() {
   try {
+    console.log(chalk.cyan("\n🎨 Starting NFT minting process..."));
+
     // Initialize client and configuration
     const config = await loadConfig();
     const walletClient = createWalletClient(config);
@@ -54,7 +56,7 @@ async function promptForGameNumber() {
     {
       type: "number",
       name: "gameNumber",
-      message: PROMPT_MESSAGES.GAME_NUMBER,
+      message: "🎮 " + PROMPT_MESSAGES.GAME_NUMBER,
       validate: (input) => input > 0 || VALIDATION.GAME_NUMBER,
     },
   ]);
@@ -68,6 +70,8 @@ async function promptForGameNumber() {
  * @param {number} gameNumber - The game number to mint NFT for
  */
 async function processNFTMinting(walletClient, contractAddress, gameNumber) {
+  console.log(chalk.yellow("\n🎯 Processing your NFT mint..."));
+
   const txHash = await mintWinningNFT(
     walletClient,
     contractAddress,
@@ -75,6 +79,27 @@ async function processNFTMinting(walletClient, contractAddress, gameNumber) {
   );
 
   displaySuccessMessages(txHash);
+
+  // Wait for transaction confirmation
+  await waitForTransactionConfirmation(walletClient, txHash);
+}
+
+/**
+ * Waits for a transaction to be confirmed and displays the confirmation
+ * @param {WalletClient} walletClient - The wallet client instance
+ * @param {string} txHash - The transaction hash to wait for
+ */
+async function waitForTransactionConfirmation(walletClient, txHash) {
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
+
+  const receipt = await walletClient.waitForTransactionReceipt({
+    hash: txHash,
+    confirmations: 1,
+  });
+
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
+  console.log(chalk.cyan("🖼️ Your NFT has been minted to your wallet!"));
 }
 
 /**
@@ -82,8 +107,8 @@ async function processNFTMinting(walletClient, contractAddress, gameNumber) {
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
-  console.log(chalk.yellow("\nTransaction Hash:"), txHash);
-  console.log(chalk.green(`${SUCCESS_MESSAGES.NFT_MINTED}`));
+  console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
+  console.log(chalk.green(SUCCESS_MESSAGES.NFT_MINTED));
 }
 
 /**
@@ -92,12 +117,15 @@ function displaySuccessMessages(txHash) {
  */
 function handleMintError(error) {
   if (error.message.includes("Not a gold ticket winner.")) {
-    console.error(chalk.yellow("\nOnly jackpot winners can mint a NFT."));
+    console.error(chalk.yellow("\n👑 Only jackpot winners can mint an NFT."));
   } else {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    console.error(
+      chalk.red("\n❌ Error:"),
+      error.shortMessage || error.message
+    );
     console.error(
       chalk.red(
-        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+        "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
       )
     );
     process.exit(1);
@@ -106,6 +134,6 @@ function handleMintError(error) {
 
 export default {
   command: "mint-nft",
-  describe: "Mint your jackpot NFT",
+  describe: "🎨 Mint your jackpot NFT",
   handler: mintNFTHandler,
 };

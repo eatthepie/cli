@@ -56,8 +56,8 @@ async function promptForGameNumber() {
     {
       type: "number",
       name: "gameNumber",
-      message: "Enter the game number to calculate payouts for:",
-      validate: (input) => input > 0 || "Please enter a valid game number",
+      message: "🎮 Enter the game number to calculate payouts for:",
+      validate: (input) => input > 0 || "⚠️ Please enter a valid game number",
     },
   ]);
   return gameNumber;
@@ -77,7 +77,7 @@ async function processPayoutCalculation(
   gameNumber
 ) {
   try {
-    console.log(chalk.yellow("\nCalculating payouts..."));
+    console.log(chalk.yellow("\n🧮 Calculating payouts..."));
 
     // Submit payout calculation transaction
     const txHash = await calculatePayouts(
@@ -87,8 +87,8 @@ async function processPayoutCalculation(
       gameNumber
     );
 
-    console.log(chalk.yellow("\nTransaction Hash:"), txHash);
-    console.log(chalk.green("Payouts calculation submitted!"));
+    console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
+    console.log(chalk.green("✨ Payouts calculation submitted!"));
 
     // Wait for transaction confirmation
     await waitForTransactionConfirmation(publicClient, txHash);
@@ -106,15 +106,15 @@ async function processPayoutCalculation(
  * @param {string} txHash - The transaction hash to wait for
  */
 async function waitForTransactionConfirmation(publicClient, txHash) {
-  console.log(chalk.yellow("\nWaiting for transaction to be confirmed..."));
+  console.log(chalk.yellow("\n⏳ Waiting for transaction to be confirmed..."));
 
   const receipt = await publicClient.waitForTransactionReceipt({
     hash: txHash,
     confirmations: 1,
   });
 
-  console.log(chalk.cyan("Block Number:"), receipt.blockNumber);
-  console.log(chalk.green("\nTransaction confirmed successfully!"));
+  console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
+  console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
 }
 
 /**
@@ -128,7 +128,7 @@ async function displayPayoutInformation(
   contractAddress,
   gameNumber
 ) {
-  console.log(chalk.yellow("\nFetching payout information..."));
+  console.log(chalk.yellow("\n💫 Fetching payout information..."));
 
   const payouts = await getGamePayouts(
     publicClient,
@@ -147,14 +147,17 @@ function handlePayoutError(error) {
   if (error.message.includes(ERROR_MESSAGES.VDF_NOT_VALIDATED)) {
     console.log(
       chalk.yellow(
-        "You can only calculate payouts once the VDF proof of the game has been submitted."
+        "⏰ You can only calculate payouts once the VDF proof of the game has been submitted."
       )
     );
   } else {
-    console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+    console.error(
+      chalk.red("\n❌ Error:"),
+      error.shortMessage || error.message
+    );
     console.error(
       chalk.red(
-        "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+        "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
       )
     );
     process.exit(1);
@@ -163,6 +166,6 @@ function handlePayoutError(error) {
 
 export default {
   command: "calculate-payouts",
-  describe: "Calculate payouts",
+  describe: "💰 Calculate payouts",
   handler: calculatePayoutsHandler,
 };

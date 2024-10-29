@@ -10,8 +10,8 @@ import { verifyPastGameVDF } from "../services/gameService.js";
  * Validation messages
  */
 const VALIDATION = {
-  GAME_NUMBER: "Please enter a valid game number",
-  FILE_PATH: "Please enter a valid file path",
+  GAME_NUMBER: "⚠️ Please enter a valid game number",
+  FILE_PATH: "⚠️ Please enter a valid file path",
 };
 
 /**
@@ -26,9 +26,10 @@ const PROMPT_MESSAGES = {
  * Status messages
  */
 const STATUS_MESSAGES = {
-  VERIFYING: "Verifying VDF proof...",
-  SUCCESS: (gameNumber) => `Game ${gameNumber} VDF verified successfully!`,
-  FAILURE: "VDF proof verification failed.",
+  VERIFYING: "🔍 Verifying VDF proof...",
+  SUCCESS: (gameNumber) =>
+    `✨ Game ${gameNumber} VDF verified successfully! 🎯`,
+  FAILURE: "❌ VDF proof verification failed.",
 };
 
 /**
@@ -89,6 +90,8 @@ function prepareProofData(proofData) {
  */
 async function verifyVDFHandler() {
   try {
+    console.log(chalk.cyan("\n🔄 Starting VDF verification process..."));
+
     // Initialize client
     const config = await loadConfig();
     const publicClient = createPublicClient(config);
@@ -114,6 +117,7 @@ async function verifyVDFHandler() {
  */
 async function getUserInput() {
   const { gameNumber, proofFilePath } = await promptForInput();
+  console.log(chalk.cyan("📂 Reading proof file..."));
   const proofData = readProofFile(proofFilePath);
   return { gameNumber, proofData };
 }
@@ -127,13 +131,13 @@ async function promptForInput() {
     {
       type: "number",
       name: "gameNumber",
-      message: PROMPT_MESSAGES.GAME_NUMBER,
+      message: "🎮 " + PROMPT_MESSAGES.GAME_NUMBER,
       validate: (input) => input > 0 || VALIDATION.GAME_NUMBER,
     },
     {
       type: "input",
       name: "proofFilePath",
-      message: PROMPT_MESSAGES.PROOF_FILE,
+      message: "📄 " + PROMPT_MESSAGES.PROOF_FILE,
       default: DEFAULTS.PROOF_FILE,
       validate: (input) => fs.existsSync(input) || VALIDATION.FILE_PATH,
     },
@@ -187,9 +191,14 @@ async function processProofVerification(
 function displayVerificationResult(isValid, gameNumber, calculatedNumbers) {
   if (isValid) {
     console.log(chalk.green(`\n${STATUS_MESSAGES.SUCCESS(gameNumber)}`));
-    console.log(chalk.cyan("Winning Numbers:"), calculatedNumbers.join(", "));
+    console.log(
+      chalk.cyan("🎯 Winning Numbers:"),
+      calculatedNumbers.join(", ")
+    );
+    console.log(chalk.yellow("\n🌟 Verification completed successfully!"));
   } else {
     console.log(chalk.red(`\n${STATUS_MESSAGES.FAILURE}`));
+    console.log(chalk.yellow("⚠️ Please check your proof file and try again."));
   }
 }
 
@@ -198,10 +207,10 @@ function displayVerificationResult(isValid, gameNumber, calculatedNumbers) {
  * @param {Error} error - The error object
  */
 function handleError(error) {
-  console.error(chalk.red("\nError:"), error.shortMessage || error.message);
+  console.error(chalk.red("\n❌ Error:"), error.shortMessage || error.message);
   console.error(
     chalk.red(
-      "\nMake sure your settings are correct.\nRun 'config' to view them and 'setup' to reset them."
+      "\n⚠️ Make sure your settings are correct.\n🔧 Run 'config' to view them and 'setup' to reset them."
     )
   );
   process.exit(1);
@@ -209,6 +218,6 @@ function handleError(error) {
 
 export default {
   command: "verify-vdf",
-  describe: "Verify a VDF proof",
+  describe: "🔍 Verify a VDF proof",
   handler: verifyVDFHandler,
 };
