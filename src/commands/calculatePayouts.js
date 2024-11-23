@@ -40,7 +40,8 @@ async function calculatePayoutsHandler() {
     await displayPayoutInformation(
       publicClient,
       config.contractAddress,
-      gameNumber
+      gameNumber,
+      config.network
     );
   } catch (error) {
     handlePayoutError(error);
@@ -122,11 +123,13 @@ async function waitForTransactionConfirmation(publicClient, txHash) {
  * @param {PublicClient} publicClient - The public client instance
  * @param {string} contractAddress - The lottery contract address
  * @param {number} gameNumber - The game number to display payouts for
+ * @param {string} network - The Ethereum network name
  */
 async function displayPayoutInformation(
   publicClient,
   contractAddress,
-  gameNumber
+  gameNumber,
+  network
 ) {
   console.log(chalk.yellow("\n💫 Fetching payout information..."));
 
@@ -136,7 +139,7 @@ async function displayPayoutInformation(
     gameNumber
   );
 
-  await displayPayouts(gameNumber, payouts);
+  await displayPayouts(gameNumber, payouts, network);
 }
 
 /**

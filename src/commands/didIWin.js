@@ -55,7 +55,8 @@ async function didIWinHandler() {
       publicClient,
       config.contractAddress,
       gameNumber,
-      walletAddress
+      walletAddress,
+      config.network
     );
   } catch (error) {
     handleWinCheckError(error);
@@ -104,12 +105,14 @@ function getDefaultWalletAddress(config) {
  * @param {string} contractAddress - The lottery contract address
  * @param {number} gameNumber - The game number to check
  * @param {string} walletAddress - The wallet address to check
+ * @param {string} network - The network name
  */
 async function checkAndDisplayWinnings(
   publicClient,
   contractAddress,
   gameNumber,
-  walletAddress
+  walletAddress,
+  network
 ) {
   const winningInfo = await getUserGameWinnings(
     publicClient,
@@ -119,7 +122,7 @@ async function checkAndDisplayWinnings(
   );
 
   if (hasWon(winningInfo)) {
-    displayWinningInfo(winningInfo);
+    displayWinningInfo(winningInfo, network);
   } else {
     console.log(chalk.yellow(`\n${WIN_MESSAGES.NO_WIN}`));
   }
@@ -137,8 +140,9 @@ function hasWon(winningInfo) {
 /**
  * Displays winning information including prize details
  * @param {Object} winningInfo - The winning information object
+ * @param {string} network - The network name
  */
-function displayWinningInfo(winningInfo) {
+function displayWinningInfo(winningInfo, network) {
   console.log(chalk.green(`\n${WIN_MESSAGES.CONGRATULATIONS}`));
   console.log(
     chalk.cyan("🏆 Jackpot:"),
@@ -155,7 +159,7 @@ function displayWinningInfo(winningInfo) {
   console.log(
     chalk.cyan("💰 Total Prize:"),
     formatEther(winningInfo.totalPrize),
-    "ETH"
+    network === "worldchain" ? "WLD" : "ETH"
   );
   console.log(
     chalk.cyan("✅ Claimed:"),

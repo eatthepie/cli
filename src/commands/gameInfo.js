@@ -68,7 +68,7 @@ async function gameInfoHandler() {
       gameNumber
     );
 
-    displayGameInformation(gameNumber, gameInfo);
+    displayGameInformation(gameNumber, gameInfo, config.network);
   } catch (error) {
     handleError(error);
   }
@@ -94,34 +94,36 @@ async function promptForGameNumber() {
  * Displays all game information
  * @param {number} gameNumber - The game number
  * @param {Object} gameInfo - The detailed game information
+ * @param {string} network - The network name
  */
-function displayGameInformation(gameNumber, gameInfo) {
+function displayGameInformation(gameNumber, gameInfo, network) {
   const status = GAME_STATUS[Number(gameInfo.status)];
   const isVdfSubmitted = gameInfo.winningNumbers[0] !== 0n;
 
   console.log(chalk.yellow(`\n🎲 Game ${gameNumber} Information:`));
 
   // Display basic game info
-  displayBasicInfo(gameInfo, status);
+  displayBasicInfo(gameInfo, status, network);
 
   // Display block information
   displayBlockInfo(gameInfo, status);
 
   // Display winning information
-  displayWinningInfo(gameInfo, status, isVdfSubmitted);
+  displayWinningInfo(gameInfo, status, isVdfSubmitted, network);
 }
 
 /**
  * Displays basic game information
  * @param {Object} gameInfo - The game information
  * @param {string} status - The game status
+ * @param {string} network - The network name
  */
-function displayBasicInfo(gameInfo, status) {
+function displayBasicInfo(gameInfo, status, network) {
   console.log(chalk.cyan("📊 Status:"), status);
   console.log(
     chalk.cyan("💰 Prize Pool:"),
     formatEther(gameInfo.prizePool),
-    "ETH"
+    network === "worldchain" ? "WLD" : "ETH"
   );
   console.log(
     chalk.cyan("🎯 Difficulty:"),
@@ -158,8 +160,9 @@ function displayBlockInfo(gameInfo, status) {
  * @param {Object} gameInfo - The game information
  * @param {string} status - The game status
  * @param {boolean} isVdfSubmitted - Whether VDF has been submitted
+ * @param {string} network - The network name
  */
-function displayWinningInfo(gameInfo, status, isVdfSubmitted) {
+function displayWinningInfo(gameInfo, status, isVdfSubmitted, network) {
   console.log(
     chalk.cyan("🎯 Winning Numbers:"),
     isVdfSubmitted ? gameInfo.winningNumbers.join(", ") : DISPLAY.NOT_AVAILABLE
@@ -173,19 +176,20 @@ function displayWinningInfo(gameInfo, status, isVdfSubmitted) {
       : DISPLAY.NOT_AVAILABLE
   );
 
-  displayPayouts(gameInfo, status);
+  displayPayouts(gameInfo, status, network);
 }
 
 /**
  * Formats and displays payout information
  * @param {Object} gameInfo - The game information
  * @param {string} status - The game status
+ * @param {string} network - The network name
  */
-function displayPayouts(gameInfo, status) {
+function displayPayouts(gameInfo, status, network) {
   console.log(
     chalk.cyan("💸 Payouts:"),
     status === "✅ Completed"
-      ? formatPayouts(gameInfo.payouts)
+      ? formatPayouts(gameInfo.payouts, network)
       : DISPLAY.NOT_AVAILABLE
   );
 }
@@ -193,12 +197,15 @@ function displayPayouts(gameInfo, status) {
 /**
  * Formats payout information into a readable string
  * @param {bigint[]} payouts - Array of payout amounts
+ * @param {string} network - The network name
  * @returns {string} Formatted payout string
  */
-function formatPayouts(payouts) {
+function formatPayouts(payouts, network) {
   return payouts
     .map((payout, index) => {
-      return `${PRIZE_TIERS[index]}: ${formatEther(payout)} ETH`;
+      return `${PRIZE_TIERS[index]}: ${formatEther(payout)} ${
+        network === "worldchain" ? "WLD" : "ETH"
+      }`;
     })
     .join(", ");
 }

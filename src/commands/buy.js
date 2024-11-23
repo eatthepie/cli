@@ -50,11 +50,12 @@ async function buyHandler() {
 
     // Confirm and process purchase
     await confirmAndProcessPurchase(
-      tickets,
-      totalPrice,
+      config.network,
       walletClient,
       publicClient,
-      config.contractAddress
+      config.contractAddress,
+      tickets,
+      totalPrice
     );
   } catch (error) {
     console.error(
@@ -194,11 +195,12 @@ function displayPurchaseSummary(tickets, totalPrice) {
  * Confirms purchase with user and processes the transaction
  */
 async function confirmAndProcessPurchase(
-  tickets,
-  totalPrice,
+  network,
   walletClient,
   publicClient,
-  contractAddress
+  contractAddress,
+  tickets,
+  totalPrice
 ) {
   const { confirm } = await inquirer.prompt([
     {
@@ -210,6 +212,7 @@ async function confirmAndProcessPurchase(
 
   if (confirm) {
     const txHash = await buyTickets(
+      network,
       walletClient,
       publicClient,
       contractAddress,
