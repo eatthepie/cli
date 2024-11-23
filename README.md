@@ -27,10 +27,11 @@ eatthepie [command]
 
 ## 📝 Deployed Contracts
 
-| Network | Address                                      |
-| ------- | -------------------------------------------- |
-| Mainnet | `0x043c9ae2764B5a7c2d685bc0262F8cF2f6D86008` |
-| Sepolia | `0x44B340051a31D216f83428B447DBa2C102DFF373` |
+| Network     | Address                                      |
+| ----------- | -------------------------------------------- |
+| Mainnet     | `0x043c9ae2764B5a7c2d685bc0262F8cF2f6D86008` |
+| World Chain | `0xB3406E515b7fA46c0Ba0E8A65e15D459A44E2de4` |
+| Sepolia     | `0x44B340051a31D216f83428B447DBa2C102DFF373` |
 
 ## Commands
 
