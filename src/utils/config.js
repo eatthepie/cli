@@ -32,3 +32,6 @@ export async function loadConfig() {
     process.exit(1);
   }
 }
+
+export const WC_ER20_TOKEN = "0x2cFc85d8E48F8EAB294be644d9E25C3030863003";
+export const PERMIT2_ADDRESS = "0x000000000022D473030F116dDEE9F6B43aC78BA3";

@@ -5,6 +5,10 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { WC_ER20_TOKEN } from "../utils/config.js";
+import { maxUint256 } from "viem";
+import { SignatureTransfer } from "@uniswap/permit2-sdk";
+import { PERMIT2_ADDRESS } from "../utils/config.js";
 
 const contractABI = JSON.parse(
   fs.readFileSync(
@@ -90,6 +94,7 @@ export async function getGamePayouts(
 
 /**
  * Purchase lottery tickets
+ * @param {Object} network - Network to buy tickets on
  * @param {Object} walletClient - Viem wallet client instance
  * @param {Object} publicClient - Viem public client instance
  * @param {string} contractAddress - Contract address
@@ -99,13 +104,17 @@ export async function getGamePayouts(
  * @throws {Error} If ticket format is invalid or transaction fails
  */
 export async function buyTickets(
+  network,
   walletClient,
   publicClient,
   contractAddress,
   tickets,
   totalCost
 ) {
-  // Format tickets into correct structure
+  if (!walletClient?.account) {
+    throw new Error("Wallet not connected");
+  }
+
   const formattedTickets = tickets.map((ticket) => {
     if (!Array.isArray(ticket) || ticket.length !== 4) {
       throw new Error("Each ticket must be an array of 4 numbers");
@@ -113,21 +122,161 @@ export async function buyTickets(
     return ticket.map((num) => BigInt(num));
   });
 
-  try {
-    // Simulate transaction
-    const { request } = await publicClient.simulateContract({
-      address: contractAddress,
-      abi: contractABI,
-      functionName: "buyTickets",
-      args: [formattedTickets],
-      account: walletClient.account,
-      value: totalCost,
-    });
+  if (network === "worldchain") {
+    try {
+      // Check token allowance for Permit2
+      const allowance = await publicClient.readContract({
+        address: WC_ER20_TOKEN,
+        abi: [
+          {
+            inputs: [
+              { name: "owner", type: "address" },
+              { name: "spender", type: "address" },
+            ],
+            name: "allowance",
+            outputs: [{ name: "", type: "uint256" }],
+            stateMutability: "view",
+            type: "function",
+          },
+        ],
+        functionName: "allowance",
+        args: [walletClient.account.address, PERMIT2_ADDRESS],
+      });
 
-    const hash = await walletClient.writeContract(request);
-    return hash;
-  } catch (error) {
-    throw new Error(`Failed to buy tickets: ${error.message}`);
+      // Approve Permit2 if needed
+      if (allowance < totalCost) {
+        const hash = await walletClient.writeContract({
+          address: WC_ER20_TOKEN,
+          abi: [
+            {
+              inputs: [
+                { name: "spender", type: "address" },
+                { name: "amount", type: "uint256" },
+              ],
+              name: "approve",
+              outputs: [{ name: "", type: "bool" }],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+          ],
+          functionName: "approve",
+          args: [PERMIT2_ADDRESS, maxUint256],
+        });
+
+        await publicClient.waitForTransactionReceipt({ hash });
+      }
+
+      // Generate Permit2 signature
+      const chainId = await publicClient.getChainId();
+      const nonce = BigInt(Math.floor(Math.random() * 1000000));
+
+      const permit = {
+        permitted: {
+          token: WC_ER20_TOKEN,
+          amount: totalCost,
+        },
+        spender: contractAddress,
+        nonce,
+        deadline: maxUint256,
+      };
+
+      const { domain, types, values } = SignatureTransfer.getPermitData(
+        permit,
+        PERMIT2_ADDRESS,
+        chainId
+      );
+
+      const signature = await walletClient.account.signTypedData({
+        domain: {
+          name: domain.name,
+          version: domain.version,
+          chainId: chainId,
+          verifyingContract: domain.verifyingContract,
+        },
+        types,
+        primaryType: "PermitTransferFrom",
+        message: values,
+      });
+
+      // Buy tickets with permit
+      const hash = await walletClient.writeContract({
+        address: contractAddress,
+        abi: [
+          {
+            type: "function",
+            name: "buyTickets",
+            inputs: [
+              {
+                name: "tickets",
+                type: "uint256[4][]",
+                internalType: "uint256[4][]",
+              },
+              {
+                name: "permit",
+                type: "tuple",
+                internalType: "struct IPermit2.PermitTransferFrom",
+                components: [
+                  {
+                    name: "permitted",
+                    type: "tuple",
+                    internalType: "struct IPermit2.TokenPermissions",
+                    components: [
+                      {
+                        name: "token",
+                        type: "address",
+                        internalType: "address",
+                      },
+                      {
+                        name: "amount",
+                        type: "uint256",
+                        internalType: "uint256",
+                      },
+                    ],
+                  },
+                  {
+                    name: "nonce",
+                    type: "uint256",
+                    internalType: "uint256",
+                  },
+                  {
+                    name: "deadline",
+                    type: "uint256",
+                    internalType: "uint256",
+                  },
+                ],
+              },
+              {
+                name: "signature",
+                type: "bytes",
+                internalType: "bytes",
+              },
+            ],
+            outputs: [],
+            stateMutability: "payable",
+          },
+        ],
+        functionName: "buyTickets",
+        args: [formattedTickets, permit, signature],
+      });
+
+      return hash;
+    } catch (error) {
+      throw new Error(`Failed to buy tickets: ${error.message}`);
+    }
+  } else {
+    try {
+      const hash = await walletClient.writeContract({
+        address: contractAddress,
+        abi: contractABI,
+        functionName: "buyTickets",
+        args: [formattedTickets],
+        value: totalCost,
+      });
+
+      return hash;
+    } catch (error) {
+      throw new Error(`Failed to buy tickets: ${error.message}`);
+    }
   }
 }
 

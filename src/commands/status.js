@@ -20,6 +20,7 @@ const STATUS_LABELS = {
  * Currency units
  */
 const CURRENCY = {
+  WLD: "WLD",
   ETH: "ETH",
 };
 
@@ -46,7 +47,7 @@ async function infoHandler() {
     );
 
     // Display status information
-    displayGameStatus(gameInfo);
+    displayGameStatus(gameInfo, config.network);
   } catch (error) {
     handleError(error);
   }
@@ -55,17 +56,19 @@ async function infoHandler() {
 /**
  * Displays the complete game status information
  * @param {Object} gameInfo - The current game information
+ * @param {string} network - The network name
  */
-function displayGameStatus(gameInfo) {
+function displayGameStatus(gameInfo, network) {
   console.log(chalk.yellow("\n📊 Status:"));
-  displayStatusFields(gameInfo);
+  displayStatusFields(gameInfo, network);
 }
 
 /**
  * Displays individual status fields with formatting
  * @param {Object} gameInfo - The game information object
+ * @param {string} network - The network name
  */
-function displayStatusFields(gameInfo) {
+function displayStatusFields(gameInfo, network) {
   const fields = [
     {
       label: STATUS_LABELS.GAME_ROUND,
@@ -77,7 +80,9 @@ function displayStatusFields(gameInfo) {
     },
     {
       label: STATUS_LABELS.PRIZE_POOL,
-      value: `${formatEther(gameInfo.prizePool)} ${CURRENCY.ETH} ✨`,
+      value: `${formatEther(gameInfo.prizePool)} ${
+        network === "worldchain" ? CURRENCY.WLD : CURRENCY.ETH
+      } ✨`,
     },
     {
       label: STATUS_LABELS.NEXT_DRAW,

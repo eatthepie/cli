@@ -52,11 +52,14 @@ export function formatDifficulty(difficulty) {
  * Display payout information for a game
  * @param {number} gameNumber - Game identifier
  * @param {Array<number>} payouts - Array of payout amounts in Wei
+ * @param {string} network - Ethereum network name
  */
-export function displayPayouts(gameNumber, payouts) {
+export function displayPayouts(gameNumber, payouts, network) {
   const payoutsInEth = payouts.map(convertWeiToEth);
   const formatPayout = (payout) =>
-    payout ? `${payout.toFixed(4)} ETH` : "no winners";
+    payout
+      ? `${payout.toFixed(4)} ${network === "worldchain" ? "WLD" : "ETH"}`
+      : "no winners";
 
   console.log(chalk.yellow(`\nGame ${gameNumber} Payouts:`));
   console.log(

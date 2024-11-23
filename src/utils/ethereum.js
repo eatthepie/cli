@@ -9,12 +9,12 @@ import {
   http,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { mainnet, sepolia } from "viem/chains";
+import { mainnet, worldchain, sepolia } from "viem/chains";
 
 /**
  * Create a public client for reading from the blockchain
  * @param {Object} config - Client configuration
- * @param {string} config.network - Network name (mainnet, sepolia)
+ * @param {string} config.network - Network name (mainnet, worldchain, sepolia)
  * @param {string} config.rpcUrl - RPC endpoint URL
  * @returns {PublicClient} Configured public client
  */
@@ -29,7 +29,7 @@ export function createPublicClient(config) {
 /**
  * Create a wallet client for signing transactions
  * @param {Object} config - Client configuration
- * @param {string} config.network - Network name (mainnet, sepolia)
+ * @param {string} config.network - Network name (mainnet, worldchain, sepolia)
  * @param {string} config.rpcUrl - RPC endpoint URL
  * @param {string} config.privateKey - Private key for signing
  * @returns {WalletClient} Configured wallet client
@@ -53,6 +53,7 @@ export function createWalletClient(config) {
 function getChain(network) {
   const chains = {
     mainnet,
+    worldchain,
     sepolia,
   };
 
