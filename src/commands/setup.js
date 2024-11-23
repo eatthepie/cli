@@ -2,14 +2,16 @@ import inquirer from "inquirer";
 import { saveConfig } from "../utils/config.js";
 import { displayBanner } from "../utils/display.js";
 
-/**
- * Network configuration defaults
- */
 const NETWORK_CONFIG = {
   MAINNET: {
     NAME: "mainnet",
     RPC: "https://cloudflare-eth.com",
     CONTRACT: "0x043c9ae2764B5a7c2d685bc0262F8cF2f6D86008",
+  },
+  WORLD_CHAIN: {
+    NAME: "worldchain",
+    RPC: "https://worldchain-mainnet.g.alchemy.com/public",
+    CONTRACT: "0xB3406E515b7fA46c0Ba0E8A65e15D459A44E2de4",
   },
   SEPOLIA: {
     NAME: "sepolia",
@@ -18,9 +20,6 @@ const NETWORK_CONFIG = {
   },
 };
 
-/**
- * Validation patterns
- */
 const VALIDATION = {
   ETHEREUM_ADDRESS: {
     PATTERN: /^0x[a-fA-F0-9]{40}$/,
@@ -37,23 +36,17 @@ const VALIDATION = {
   },
 };
 
-/**
- * Welcome messages
- */
 const MESSAGES = {
   WELCOME: "🥧 Welcome to Eat The Pie! Let's set up your configuration 🚀",
   SUCCESS: "✨ Configuration saved successfully! You're ready to go! 🎉",
 };
 
-/**
- * Setup questions configuration
- */
 const setupQuestions = [
   {
     type: "list",
     name: "network",
     message: "🌐 Which network would you like to use?",
-    choices: ["mainnet", "sepolia"],
+    choices: ["mainnet", "worldchain", "sepolia"],
     default: NETWORK_CONFIG.MAINNET.NAME,
   },
   {
@@ -85,67 +78,50 @@ const setupQuestions = [
   },
 ];
 
-/**
- * Handles the initial setup process for the application
- */
 async function setupHandler() {
   displayWelcomeMessage();
   await processSetup();
 }
 
-/**
- * Displays the welcome banner and message
- */
 function displayWelcomeMessage() {
   displayBanner();
   console.log(MESSAGES.WELCOME);
 }
 
-/**
- * Processes the setup questions and saves configuration
- */
 async function processSetup() {
   const config = await promptForConfiguration();
   await saveConfiguration(config);
 }
 
-/**
- * Prompts the user for configuration details
- * @returns {Promise<Object>} The user's configuration answers
- */
 async function promptForConfiguration() {
   return await inquirer.prompt(setupQuestions);
 }
 
-/**
- * Saves the configuration and displays success message
- * @param {Object} config - The configuration to save
- */
 async function saveConfiguration(config) {
   await saveConfig(config);
   console.log(MESSAGES.SUCCESS);
 }
 
-/**
- * Gets the default contract based on the selected network
- * @param {Object} answers - The current answers object
- * @returns {string} The default contract
- */
 function getContractDefault(answers) {
-  return answers.network === NETWORK_CONFIG.MAINNET.NAME
-    ? NETWORK_CONFIG.MAINNET.CONTRACT
-    : NETWORK_CONFIG.SEPOLIA.CONTRACT;
+  switch (answers.network) {
+    case NETWORK_CONFIG.MAINNET.NAME:
+      return NETWORK_CONFIG.MAINNET.CONTRACT;
+    case NETWORK_CONFIG.WORLD_CHAIN.NAME:
+      return NETWORK_CONFIG.WORLD_CHAIN.CONTRACT;
+    case NETWORK_CONFIG.SEPOLIA.NAME:
+      return NETWORK_CONFIG.SEPOLIA.CONTRACT;
+  }
 }
 
-/**
- * Gets the default RPC URL based on the selected network
- * @param {Object} answers - The current answers object
- * @returns {string} The default RPC URL
- */
 function getRpcUrlDefault(answers) {
-  return answers.network === NETWORK_CONFIG.MAINNET.NAME
-    ? NETWORK_CONFIG.MAINNET.RPC
-    : NETWORK_CONFIG.SEPOLIA.RPC;
+  switch (answers.network) {
+    case NETWORK_CONFIG.MAINNET.NAME:
+      return NETWORK_CONFIG.MAINNET.RPC;
+    case NETWORK_CONFIG.WORLD_CHAIN.NAME:
+      return NETWORK_CONFIG.WORLD_CHAIN.RPC;
+    case NETWORK_CONFIG.SEPOLIA.NAME:
+      return NETWORK_CONFIG.SEPOLIA.RPC;
+  }
 }
 
 export default {
