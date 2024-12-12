@@ -11,7 +11,7 @@ const NETWORK_CONFIG = {
   WORLD_CHAIN: {
     NAME: "worldchain",
     RPC: "https://worldchain-mainnet.g.alchemy.com/public",
-    CONTRACT: "0xB3406E515b7fA46c0Ba0E8A65e15D459A44E2de4",
+    CONTRACT: "0x44b340051a31d216f83428b447dba2c102dff373",
   },
   SEPOLIA: {
     NAME: "sepolia",

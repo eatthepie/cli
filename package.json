@@ -1,6 +1,6 @@
 {
   "name": "eatthepie",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Command line app for interacting with Eat The Pie, the world lottery on Ethereum.",
   "main": "src/index.js",
   "type": "module",
