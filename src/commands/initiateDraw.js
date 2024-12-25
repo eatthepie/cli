@@ -39,14 +39,16 @@ async function initiateDrawHandler() {
 
     // Initialize clients and configuration
     const config = await loadConfig();
-    const publicClient = createPublicClient(config);
     const walletClient = createWalletClient(config);
 
-    // Process draw initiation
+    // Get Witnet fee from user
+    const witnetFee = await promptWitnetFee();
+
+    // Process draw initiation with fee
     await processDrawInitiation(
       walletClient,
-      publicClient,
-      config.contractAddress
+      config.contractAddress,
+      witnetFee
     );
   } catch (error) {
     handleDrawError(error);
@@ -54,23 +56,37 @@ async function initiateDrawHandler() {
 }
 
 /**
+ * Prompts the user for the Witnet randomness fee
+ * @returns {string} The fee amount in ether
+ */
+async function promptWitnetFee() {
+  const { default: inquirer } = await import("inquirer");
+  const { fee } = await inquirer.prompt([
+    {
+      type: "input",
+      name: "fee",
+      message: "💰 Enter the amount of ETH to send for Witnet randomness:",
+      validate: (value) => {
+        if (!value || isNaN(value)) {
+          return "Please enter a valid number";
+        }
+        return true;
+      },
+    },
+  ]);
+  return fee;
+}
+
+/**
  * Processes the draw initiation transaction and displays results
  * @param {WalletClient} walletClient - The wallet client instance
- * @param {PublicClient} publicClient - The public client instance
  * @param {string} contractAddress - The lottery contract address
+ * @param {string} witnetFee - The Witnet randomness fee
  */
-async function processDrawInitiation(
-  walletClient,
-  publicClient,
-  contractAddress
-) {
+async function processDrawInitiation(walletClient, contractAddress, witnetFee) {
   console.log(chalk.yellow("\n🎯 Processing draw initiation..."));
 
-  const txHash = await initiateDraw(
-    walletClient,
-    publicClient,
-    contractAddress
-  );
+  const txHash = await initiateDraw(walletClient, contractAddress, witnetFee);
 
   displaySuccessMessages(txHash);
 

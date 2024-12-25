@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { WC_ER20_TOKEN } from "../utils/config.js";
-import { maxUint256 } from "viem";
+import { maxUint256, parseEther } from "viem";
 import { SignatureTransfer } from "@uniswap/permit2-sdk";
 import { PERMIT2_ADDRESS } from "../utils/config.js";
 
@@ -332,8 +332,7 @@ export async function getDetailedGameInfo(
     winningNumbers: result.winningNumbers,
     difficulty: result.difficulty,
     drawInitiatedBlock: result.drawInitiatedBlock,
-    randaoBlock: result.randaoBlock,
-    randaoValue: result.randaoValue,
+    randomValue: result.randomValue,
     payouts: result.payouts,
   };
 }
@@ -461,23 +460,18 @@ export async function mintWinningNFT(
 /**
  * Initiate a new game draw
  * @param {Object} walletClient - Viem wallet client instance
- * @param {Object} publicClient - Viem public client instance
  * @param {string} contractAddress - Contract address
+ * @param {string} witnetFee - The Witnet randomness fee
  * @returns {Promise<string>} Transaction hash
  */
-export async function initiateDraw(
-  walletClient,
-  publicClient,
-  contractAddress
-) {
+export async function initiateDraw(walletClient, contractAddress, witnetFee) {
   try {
-    const { request } = await publicClient.simulateContract({
+    const hash = await walletClient.writeContract({
       address: contractAddress,
       abi: contractABI,
       functionName: "initiateDraw",
+      value: parseEther(witnetFee),
     });
-
-    const hash = await walletClient.writeContract(request);
     return hash;
   } catch (error) {
     throw new Error(`Failed to initiate draw: ${error.message}`);
@@ -502,7 +496,7 @@ export async function setRandao(
     const { request } = await publicClient.simulateContract({
       address: contractAddress,
       abi: contractABI,
-      functionName: "setRandom",
+      functionName: "setRandomAndWinningNumbers",
       args: [BigInt(gameNumber)],
     });
 

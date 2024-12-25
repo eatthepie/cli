@@ -149,9 +149,9 @@ function displayBlockInfo(gameInfo, status) {
   );
   console.log(
     chalk.cyan("🎲 RANDAO Value:"),
-    isInPlay || !gameInfo.randaoValue
+    isInPlay || !gameInfo.randomValue
       ? DISPLAY.NOT_AVAILABLE
-      : gameInfo.randaoValue.toString()
+      : gameInfo.randomValue.toString()
   );
 }
 
