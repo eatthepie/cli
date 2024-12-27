@@ -35,8 +35,8 @@ export function generateRandomTicket(limits) {
 }
 
 /**
- * Convert Wei to ETH
+ * Convert Wei to WLD
  * @param {bigint|string|number} wei - Amount in Wei
- * @returns {number} Amount in ETH
+ * @returns {number} Amount in WLD
  */
-export const convertWeiToEth = (wei) => Number(wei) / 1e18;
+export const convertWeiToWld = (wei) => Number(wei) / 1e18;

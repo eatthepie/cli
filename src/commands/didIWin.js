@@ -21,7 +21,7 @@ const ERROR_MESSAGES = {
 const VALIDATION = {
   ETHEREUM_ADDRESS: {
     PATTERN: /^0x[a-fA-F0-9]{40}$/,
-    MESSAGE: "⚠️ Please enter a valid Ethereum address",
+    MESSAGE: "⚠️ Please enter a valid World Chain address",
   },
   GAME_NUMBER: {
     MESSAGE: "⚠️ Please enter a valid game number",

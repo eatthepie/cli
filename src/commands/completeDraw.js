@@ -2,13 +2,12 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import { loadConfig } from "../utils/config.js";
 import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
-import { setRandao } from "../services/gameService.js";
+import { completeDraw } from "../services/gameService.js";
 
 /**
  * Error messages that require special handling
  */
 const ERROR_MESSAGES = {
-  BUFFER_PERIOD: "Buffer period not yet passed",
   DRAW_NOT_INITIATED: "Draw not initiated for this game",
   ALREADY_SET: "Random has already been set",
 };
@@ -17,16 +16,15 @@ const ERROR_MESSAGES = {
  * Error response messages
  */
 const ERROR_RESPONSES = {
-  BUFFER_PERIOD: "⏳ Buffer period (128 blocks) not yet passed.",
   DRAW_NOT_INITIATED: "🎲 Draw has not yet been initiated for this game.",
-  ALREADY_SET: "✅ RANDAO has already been set for this game.",
+  ALREADY_SET: "✅ Draw has already been completed for this game.",
 };
 
 /**
  * Success messages
  */
 const SUCCESS_MESSAGES = {
-  RANDAO_SET: "🎲 RANDAO value set successfully! ✨",
+  DRAW_COMPLETED: "🎲 Draw completed successfully! ✨",
 };
 
 /**
@@ -40,15 +38,15 @@ const VALIDATION = {
  * Prompt messages
  */
 const PROMPT_MESSAGES = {
-  GAME_NUMBER: "Enter the game number to set the RANDAO value for:",
+  GAME_NUMBER: "Enter the game number to complete the draw for:",
 };
 
 /**
- * Handles the process of setting the RANDAO value for a specific game.
+ * Handles the process of completing the draw for a specific game.
  */
-async function setRandaoHandler() {
+async function completeDrawHandler() {
   try {
-    console.log(chalk.cyan("\n🎲 Starting RANDAO setup process..."));
+    console.log(chalk.cyan("\n🎲 Starting draw completion process..."));
 
     // Initialize clients and configuration
     const config = await loadConfig();
@@ -58,15 +56,15 @@ async function setRandaoHandler() {
     // Get game number from user
     const gameNumber = await promptForGameNumber();
 
-    // Process RANDAO value setting
-    await processSetRandao(
+    // Process draw completion
+    await processCompleteDraw(
       walletClient,
       publicClient,
       config.contractAddress,
       gameNumber
     );
   } catch (error) {
-    handleSetRandaoError(error);
+    handleCompleteDrawError(error);
   }
 }
 
@@ -87,21 +85,21 @@ async function promptForGameNumber() {
 }
 
 /**
- * Processes the RANDAO value setting transaction and displays results
+ * Processes the draw completion transaction and displays results
  * @param {WalletClient} walletClient - The wallet client instance
  * @param {PublicClient} publicClient - The public client instance
  * @param {string} contractAddress - The lottery contract address
- * @param {number} gameNumber - The game number to set RANDAO for
+ * @param {number} gameNumber - The game number to complete the draw for
  */
-async function processSetRandao(
+async function processCompleteDraw(
   walletClient,
   publicClient,
   contractAddress,
   gameNumber
 ) {
-  console.log(chalk.yellow("\n🎯 Setting RANDAO value..."));
+  console.log(chalk.yellow("\n🎯 Completing draw..."));
 
-  const txHash = await setRandao(
+  const txHash = await completeDraw(
     walletClient,
     publicClient,
     contractAddress,
@@ -129,27 +127,25 @@ async function waitForTransactionConfirmation(publicClient, txHash) {
 
   console.log(chalk.cyan("📦 Block Number:"), receipt.blockNumber);
   console.log(chalk.green("\n✅ Transaction confirmed successfully!"));
-  console.log(chalk.cyan("🎲 RANDAO value has been set!"));
+  console.log(chalk.cyan("🎲 Draw has been completed!"));
 }
 
 /**
- * Displays success messages after setting RANDAO value
+ * Displays success messages after completing the draw
  * @param {string} txHash - The transaction hash
  */
 function displaySuccessMessages(txHash) {
   console.log(chalk.yellow("\n📝 Transaction Hash:"), txHash);
-  console.log(chalk.green(SUCCESS_MESSAGES.RANDAO_SET));
+  console.log(chalk.green(SUCCESS_MESSAGES.DRAW_COMPLETED));
 }
 
 /**
- * Handles errors that occur during the RANDAO value setting process
+ * Handles errors that occur during the draw completion process
  * @param {Error} error - The error to handle
  */
-function handleSetRandaoError(error) {
+function handleCompleteDrawError(error) {
   // Map of error messages to their corresponding responses
   const errorHandlers = {
-    [ERROR_MESSAGES.BUFFER_PERIOD]: () =>
-      console.log(chalk.yellow(ERROR_RESPONSES.BUFFER_PERIOD)),
     [ERROR_MESSAGES.DRAW_NOT_INITIATED]: () =>
       console.log(chalk.yellow(ERROR_RESPONSES.DRAW_NOT_INITIATED)),
     [ERROR_MESSAGES.ALREADY_SET]: () =>
@@ -174,7 +170,7 @@ function handleSetRandaoError(error) {
 }
 
 export default {
-  command: "set-randao",
-  describe: "🎲 Set the RANDAO value",
-  handler: setRandaoHandler,
+  command: "complete-draw",
+  describe: "🎲 Complete the draw",
+  handler: completeDrawHandler,
 };

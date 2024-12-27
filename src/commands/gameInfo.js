@@ -98,7 +98,7 @@ async function promptForGameNumber() {
  */
 function displayGameInformation(gameNumber, gameInfo, network) {
   const status = GAME_STATUS[Number(gameInfo.status)];
-  const isVdfSubmitted = gameInfo.winningNumbers[0] !== 0n;
+  const areNumbersSet = gameInfo.winningNumbers[0] !== 0n;
 
   console.log(chalk.yellow(`\n🎲 Game ${gameNumber} Information:`));
 
@@ -109,7 +109,7 @@ function displayGameInformation(gameNumber, gameInfo, network) {
   displayBlockInfo(gameInfo, status);
 
   // Display winning information
-  displayWinningInfo(gameInfo, status, isVdfSubmitted, network);
+  displayWinningInfo(gameInfo, status, areNumbersSet, network);
 }
 
 /**
@@ -144,11 +144,7 @@ function displayBlockInfo(gameInfo, status) {
     isInPlay ? DISPLAY.NOT_AVAILABLE : gameInfo.drawInitiatedBlock.toString()
   );
   console.log(
-    chalk.cyan("🔄 RANDAO Block:"),
-    isInPlay ? DISPLAY.NOT_AVAILABLE : gameInfo.randaoBlock.toString()
-  );
-  console.log(
-    chalk.cyan("🎲 RANDAO Value:"),
+    chalk.cyan("🎲 Witnet Randomness Value:"),
     isInPlay || !gameInfo.randomValue
       ? DISPLAY.NOT_AVAILABLE
       : gameInfo.randomValue.toString()
@@ -159,17 +155,17 @@ function displayBlockInfo(gameInfo, status) {
  * Displays winning-related information
  * @param {Object} gameInfo - The game information
  * @param {string} status - The game status
- * @param {boolean} isVdfSubmitted - Whether VDF has been submitted
+ * @param {boolean} areNumbersSet - Whether the winning numbers have been set
  * @param {string} network - The network name
  */
-function displayWinningInfo(gameInfo, status, isVdfSubmitted, network) {
+function displayWinningInfo(gameInfo, status, areNumbersSet, network) {
   console.log(
     chalk.cyan("🎯 Winning Numbers:"),
-    isVdfSubmitted ? gameInfo.winningNumbers.join(", ") : DISPLAY.NOT_AVAILABLE
+    areNumbersSet ? gameInfo.winningNumbers.join(", ") : DISPLAY.NOT_AVAILABLE
   );
   console.log(
     chalk.cyan("👥 Number of Winners:"),
-    isVdfSubmitted
+    areNumbersSet
       ? `${gameInfo.numberOfWinners.toString()} (🏆: ${
           gameInfo.goldWinners
         }, 🥈: ${gameInfo.silverWinners}, 🥉: ${gameInfo.bronzeWinners})`

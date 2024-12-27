@@ -4,7 +4,7 @@
 
 import figlet from "figlet";
 import chalk from "chalk";
-import { convertWeiToEth } from "./helpers.js";
+import { convertWeiToWld } from "./helpers.js";
 
 /**
  * Display the application banner
@@ -18,10 +18,10 @@ export function displayBanner() {
       })
     )
   );
-  console.log(chalk.cyan("♦♦♦ THE WORLD LOTTERY ON ETHEREUM ♦♦♦ \n"));
+  console.log(chalk.cyan("♦♦♦ THE WORLD LOTTERY ON WORLD CHAIN ♦♦♦ \n"));
   console.log(
     chalk.yellow(
-      "NOTICE: Eat The Pie is a fully decentralized lottery running autonomously on Ethereum - all operations are irreversible and governed by immutable smart contracts. Participate at your own risk.\n"
+      "NOTICE: Eat The Pie is a fully decentralized lottery running autonomously on World Chain - all operations are irreversible and governed by immutable smart contracts. Participate at your own risk.\n"
     )
   );
 }
@@ -52,10 +52,10 @@ export function formatDifficulty(difficulty) {
  * Display payout information for a game
  * @param {number} gameNumber - Game identifier
  * @param {Array<number>} payouts - Array of payout amounts in Wei
- * @param {string} network - Ethereum network name
+ * @param {string} network - Worldchain network name
  */
 export function displayPayouts(gameNumber, payouts, network) {
-  const payoutsInEth = payouts.map(convertWeiToEth);
+  const payoutsInEth = payouts.map(convertWeiToWld);
   const formatPayout = (payout) =>
     payout
       ? `${payout.toFixed(4)} ${network === "worldchain" ? "WLD" : "ETH"}`

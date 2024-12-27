@@ -332,7 +332,7 @@ export async function getDetailedGameInfo(
     winningNumbers: result.winningNumbers,
     difficulty: result.difficulty,
     drawInitiatedBlock: result.drawInitiatedBlock,
-    randomValue: result.randomValue,
+    randomValue: result.randomSeed,
     payouts: result.payouts,
   };
 }
@@ -342,7 +342,7 @@ export async function getDetailedGameInfo(
  * @param {Object} publicClient - Viem public client instance
  * @param {string} contractAddress - Contract address
  * @param {number} gameNumber - Game identifier
- * @param {string} userAddress - User's ethereum address
+ * @param {string} userAddress - User's world chain address
  * @returns {Promise<Object>} User's winning information
  */
 export async function getUserGameWinnings(
@@ -479,14 +479,14 @@ export async function initiateDraw(walletClient, contractAddress, witnetFee) {
 }
 
 /**
- * Set RANDAO value for a game
+ * Complete draw for a game
  * @param {Object} walletClient - Viem wallet client instance
  * @param {Object} publicClient - Viem public client instance
  * @param {string} contractAddress - Contract address
  * @param {number} gameNumber - Game identifier
  * @returns {Promise<string>} Transaction hash
  */
-export async function setRandao(
+export async function completeDraw(
   walletClient,
   publicClient,
   contractAddress,
@@ -503,74 +503,7 @@ export async function setRandao(
     const hash = await walletClient.writeContract(request);
     return hash;
   } catch (error) {
-    throw new Error(`Failed to set RANDAO value: ${error.message}`);
-  }
-}
-
-/**
- * Submit VDF proof for a game
- * @param {Object} walletClient - Viem wallet client instance
- * @param {Object} publicClient - Viem public client instance
- * @param {string} contractAddress - Contract address
- * @param {number} gameNumber - Game identifier
- * @param {string} v - VDF value
- * @param {string} y - VDF proof
- * @returns {Promise<string>} Transaction hash
- */
-export async function submitVDFProof(
-  walletClient,
-  publicClient,
-  contractAddress,
-  gameNumber,
-  v,
-  y
-) {
-  try {
-    const { request } = await publicClient.simulateContract({
-      address: contractAddress,
-      abi: contractABI,
-      functionName: "submitVDFProof",
-      args: [BigInt(gameNumber), v, y],
-    });
-
-    const hash = await walletClient.writeContract(request);
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    return receipt.transactionHash;
-  } catch (error) {
-    throw new Error(`Failed to submit VDF proof: ${error.message}`);
-  }
-}
-
-/**
- * Verify VDF proof for a past game
- * @param {Object} publicClient - Viem public client instance
- * @param {string} contractAddress - Contract address
- * @param {number} gameNumber - Game identifier
- * @param {string} v - VDF value
- * @param {string} y - VDF proof
- * @returns {Promise<Object>} Verification result with calculated numbers and validity
- */
-export async function verifyPastGameVDF(
-  publicClient,
-  contractAddress,
-  gameNumber,
-  v,
-  y
-) {
-  try {
-    const result = await publicClient.readContract({
-      address: contractAddress,
-      abi: contractABI,
-      functionName: "verifyPastGameVDF",
-      args: [BigInt(gameNumber), v, y],
-    });
-
-    return {
-      calculatedNumbers: result[0],
-      isValid: result[1],
-    };
-  } catch (error) {
-    throw new Error(`Failed to verify VDF proof: ${error.message}`);
+    throw new Error(`Failed to complete draw: ${error.message}`);
   }
 }
 

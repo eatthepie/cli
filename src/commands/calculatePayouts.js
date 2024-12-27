@@ -11,7 +11,7 @@ import { createPublicClient, createWalletClient } from "../utils/ethereum.js";
  */
 const ERROR_MESSAGES = {
   ALREADY_CALCULATED: "Payouts already calculated for this game",
-  VDF_NOT_VALIDATED: "VDF proof not yet validated for this game",
+  WINNING_NUMBERS_NOT_SET: "Winning numbers not set",
 };
 
 /**
@@ -123,7 +123,7 @@ async function waitForTransactionConfirmation(publicClient, txHash) {
  * @param {PublicClient} publicClient - The public client instance
  * @param {string} contractAddress - The lottery contract address
  * @param {number} gameNumber - The game number to display payouts for
- * @param {string} network - The Ethereum network name
+ * @param {string} network - The World Chain network name
  */
 async function displayPayoutInformation(
   publicClient,
@@ -147,10 +147,10 @@ async function displayPayoutInformation(
  * @param {Error} error - The error to handle
  */
 function handlePayoutError(error) {
-  if (error.message.includes(ERROR_MESSAGES.VDF_NOT_VALIDATED)) {
+  if (error.message.includes(ERROR_MESSAGES.WINNING_NUMBERS_NOT_SET)) {
     console.log(
       chalk.yellow(
-        "⏰ You can only calculate payouts once the VDF proof of the game has been submitted."
+        "⏰ You can only calculate payouts once the winning numbers have been set."
       )
     );
   } else {

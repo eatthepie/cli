@@ -3,27 +3,17 @@ import { saveConfig } from "../utils/config.js";
 import { displayBanner } from "../utils/display.js";
 
 const NETWORK_CONFIG = {
-  MAINNET: {
-    NAME: "mainnet",
-    RPC: "https://cloudflare-eth.com",
-    CONTRACT: "0x043c9ae2764B5a7c2d685bc0262F8cF2f6D86008",
-  },
   WORLD_CHAIN: {
     NAME: "worldchain",
     RPC: "https://worldchain-mainnet.g.alchemy.com/public",
-    CONTRACT: "0x44b340051a31d216f83428b447dba2c102dff373",
-  },
-  SEPOLIA: {
-    NAME: "sepolia",
-    RPC: "https://rpc2.sepolia.org",
-    CONTRACT: "0x44B340051a31D216f83428B447DBa2C102DFF373",
+    CONTRACT: "0x86510c295644d1214dc62112e15ec314076acf2c",
   },
 };
 
 const VALIDATION = {
   ETHEREUM_ADDRESS: {
     PATTERN: /^0x[a-fA-F0-9]{40}$/,
-    MESSAGE: "⚠️ Please enter a valid Ethereum address",
+    MESSAGE: "⚠️ Please enter a valid World Chain address",
   },
   PRIVATE_KEY: {
     PATTERN: /^0x[a-fA-F0-9]{64}$/,
@@ -46,7 +36,7 @@ const setupQuestions = [
     type: "list",
     name: "network",
     message: "🌐 Which network would you like to use?",
-    choices: ["mainnet", "worldchain", "sepolia"],
+    choices: ["worldchain"],
     default: NETWORK_CONFIG.MAINNET.NAME,
   },
   {
@@ -104,23 +94,15 @@ async function saveConfiguration(config) {
 
 function getContractDefault(answers) {
   switch (answers.network) {
-    case NETWORK_CONFIG.MAINNET.NAME:
-      return NETWORK_CONFIG.MAINNET.CONTRACT;
     case NETWORK_CONFIG.WORLD_CHAIN.NAME:
       return NETWORK_CONFIG.WORLD_CHAIN.CONTRACT;
-    case NETWORK_CONFIG.SEPOLIA.NAME:
-      return NETWORK_CONFIG.SEPOLIA.CONTRACT;
   }
 }
 
 function getRpcUrlDefault(answers) {
   switch (answers.network) {
-    case NETWORK_CONFIG.MAINNET.NAME:
-      return NETWORK_CONFIG.MAINNET.RPC;
     case NETWORK_CONFIG.WORLD_CHAIN.NAME:
       return NETWORK_CONFIG.WORLD_CHAIN.RPC;
-    case NETWORK_CONFIG.SEPOLIA.NAME:
-      return NETWORK_CONFIG.SEPOLIA.RPC;
   }
 }
 

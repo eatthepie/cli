@@ -76,7 +76,7 @@ async function buyHandler() {
  */
 function displayGameInfo(ticketPrice, difficulty, limits) {
   console.log(
-    chalk.cyan(`💰 Current ticket price: ${formatEther(ticketPrice)} ETH`)
+    chalk.cyan(`💰 Current ticket price: ${formatEther(ticketPrice)} WLD`)
   );
   console.log(
     chalk.cyan(`🎯 Current difficulty: ${formatDifficulty(difficulty)}`)
@@ -188,7 +188,7 @@ function displayPurchaseSummary(tickets, totalPrice) {
   tickets.forEach((ticket, index) => {
     console.log(chalk.cyan(`🎟️ Ticket ${index + 1}:`), ticket.join(", "));
   });
-  console.log(chalk.cyan(`💰 Total cost: ${formatEther(totalPrice)} ETH`));
+  console.log(chalk.cyan(`💰 Total cost: ${formatEther(totalPrice)} WLD`));
 }
 
 /**

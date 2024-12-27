@@ -27,9 +27,7 @@ import mintNFTCommand from "./commands/mintNFT.js";
 
 // Draw and Verification Commands
 import initiateDrawCommand from "./commands/initiateDraw.js";
-import setRandaoCommand from "./commands/setRandao.js";
-import submitVDFProofCommand from "./commands/submitVDFProof.js";
-import verifyVDFCommand from "./commands/verifyVDF.js";
+import completeDrawCommand from "./commands/completeDraw.js";
 import calculatePayoutsCommand from "./commands/calculatePayouts.js";
 
 yargs(hideBin(process.argv))
@@ -51,9 +49,7 @@ yargs(hideBin(process.argv))
 
   // Draw and Verification Commands
   .command(initiateDrawCommand)
-  .command(setRandaoCommand)
-  .command(submitVDFProofCommand)
-  .command(verifyVDFCommand)
+  .command(completeDrawCommand)
   .command(calculatePayoutsCommand)
 
   // Difficulty Commands
