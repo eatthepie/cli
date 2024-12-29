@@ -40,13 +40,14 @@ async function initiateDrawHandler() {
     // Initialize clients and configuration
     const config = await loadConfig();
     const walletClient = createWalletClient(config);
-
+    const publicClient = createPublicClient(config);
     // Get Witnet fee from user
     const witnetFee = await promptWitnetFee();
 
     // Process draw initiation with fee
     await processDrawInitiation(
       walletClient,
+      publicClient,
       config.contractAddress,
       witnetFee
     );
@@ -80,10 +81,16 @@ async function promptWitnetFee() {
 /**
  * Processes the draw initiation transaction and displays results
  * @param {WalletClient} walletClient - The wallet client instance
+ * @param {PublicClient} publicClient - The public client instance
  * @param {string} contractAddress - The lottery contract address
  * @param {string} witnetFee - The Witnet randomness fee
  */
-async function processDrawInitiation(walletClient, contractAddress, witnetFee) {
+async function processDrawInitiation(
+  walletClient,
+  publicClient,
+  contractAddress,
+  witnetFee
+) {
   console.log(chalk.yellow("\n🎯 Processing draw initiation..."));
 
   const txHash = await initiateDraw(walletClient, contractAddress, witnetFee);

@@ -37,7 +37,7 @@ const setupQuestions = [
     name: "network",
     message: "🌐 Which network would you like to use?",
     choices: ["worldchain"],
-    default: NETWORK_CONFIG.MAINNET.NAME,
+    default: NETWORK_CONFIG.WORLD_CHAIN.NAME,
   },
   {
     type: "input",
